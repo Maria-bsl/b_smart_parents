@@ -1,0 +1,7 @@
+{
+  "name": "b_smart_parents",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
