@@ -1,0 +1,20 @@
+<div class="px-8 py-8 overflow-y-auto overflow-x-hidden">
+  <div class="flex flex-row items-center justify-between">
+    <ion-text class="mat-title-large !font-semibold text-left">
+      {{ "resultsPage.labels.exams" | translate }}
+    </ion-text>
+  </div>
+  <mat-list *ngIf="examTypes$ | async as examTypes" class="flex flex-col">
+    <a
+      [routerLink]="'/tabs/tab-1/results/' + (examType.ExamSno | toBase64)"
+      matRipple
+      *ngFor="let examType of examTypes"
+      class="flex flex-row items-center justify-between py-3 w-full"
+    >
+      <span class="capitalize" matListItemTitle>{{
+        examType.Exam_Type.toLocaleLowerCase()
+      }}</span>
+      <mat-icon svgIcon="chevron-right" matPrefix></mat-icon>
+    </a>
+  </mat-list>
+</div>

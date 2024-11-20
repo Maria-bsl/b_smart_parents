@@ -1,0 +1,17 @@
+<ion-title mat-dialog-title>{{ data.title }}</ion-title>
+<mat-dialog-content>
+  <ion-text>{{ data.message }}</ion-text>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>
+    {{ "defaults.no" | translate }}
+  </button>
+  <button
+    (click)="confirmClicked()"
+    mat-button
+    mat-dialog-close
+    cdkFocusInitial
+  >
+    {{ "defaults.yes" | translate }}
+  </button>
+</mat-dialog-actions>

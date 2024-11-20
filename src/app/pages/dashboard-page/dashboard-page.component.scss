@@ -1,0 +1,28 @@
+.academic-year-chip {
+  background-color: var(--sys-inverse-primary) !important;
+}
+
+.icon-primary-color {
+  background-color: var(--sys-inverse-primary);
+}
+
+.fees-icon-primary-color {
+  background-color: var(--sys-inverse-secondary) !important;
+}
+
+.icon-primary-color mat-icon {
+  color: var(--sys-primary) !important;
+}
+
+.fees-icon-primary-color mat-icon {
+  color: var(--sys-on-secondary-container) !important;
+}
+
+.module-grid-tile {
+  //background-color: var(--sys-tertiary-container);
+  background-color: #f5f6fc;
+}
+
+.module-grid-tile mat-icon {
+  color: var(--sys-secondary) !important;
+}

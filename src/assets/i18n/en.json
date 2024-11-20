@@ -1,0 +1,201 @@
+{
+  "defaults": {
+    "failed": "Failed",
+    "warning": "Warning",
+    "cannotBeBlankText": "Cannot be blank",
+    "confirm": "Confirm",
+    "ok": "Ok",
+    "yes": "Yes",
+    "no": "No",
+    "labels": {
+      "from": "From",
+      "to": "To",
+      "download": "Download"
+    },
+    "dialogs": {
+      "sureLogoutText": "Are you sure you want to log out?"
+    },
+    "errors": {
+      "invalidForm": "Invalid form",
+      "notAvailableText": "Not Available"
+    }
+  },
+  "registerPage": {
+    "labels": {
+      "registerText": "Registration",
+      "completeFormText": "Complete the form below to continue"
+    },
+    "registerForm": {
+      "labels": {
+        "fullNameText": "Full name",
+        "mobileNumberText": "Mobile number",
+        "usernameText": "Username",
+        "emailText": "Email Address"
+      },
+      "placeholders": {
+        "enterFullName": "Enter full name",
+        "mobileNumber": "000-000-000",
+        "username": "Create username",
+        "emailAddress": "Ex. theswaki@example.com"
+      },
+      "errors": {
+        "missingUsername": "Please, create a username",
+        "missingParentName": "Please, provide a parent name.",
+        "missingPhoneNumber": "Please, provide a phone number",
+        "missingEmailAddress": "Please, provide an email address",
+        "invalidSchoolName": "A school name you entered was not found.",
+        "mobileNumberIsInvalid": "The mobile number you have entered is invalid",
+        "invalidEmail": "Invalid email",
+        "invalidPhoneNumber": "Invalid phone number entered.",
+        "missingSchoolName": "A school name is missing",
+        "missingAdmissionNumber": "Provide an admission number.",
+        "schoolNameNotExist": "This school name does not exist."
+      }
+    }
+  },
+  "loginPage": {
+    "labels": {
+      "welcomeText": "Welcome",
+      "signInToContinue": "Sign in to continue"
+    },
+    "loginForm": {
+      "labels": {
+        "emailAddress": "Email Address",
+        "password": "Password"
+      },
+      "placeholders": {
+        "emailAddress": "Enter email address",
+        "password": "Enter password"
+      },
+      "errors": {
+        "blankEmailAddress": "Cannot be blank",
+        "invalidEmailAddress": "Invalid email address",
+        "blankPassword": "Cannot be blank"
+      },
+      "messageBox": {
+        "errors": {
+          "usernamePasswordIncorrect": "The username or password you entered is incorrect.",
+          "errorOccuredText": "An error occured on the server."
+        }
+      }
+    },
+    "actions": {
+      "signIn": "Sign in",
+      "forgotPassword": "Forgot password?",
+      "register": "Register here"
+    }
+  },
+  "homePage": {
+    "labels": {
+      "welcomeBackText": "Welcome back",
+      "students": "Student(s)"
+    }
+  },
+  "addStudentPage": {
+    "labels": {
+      "addStudentText": "Add Student",
+      "fillFormToContinueText": "Fill the form below to continue",
+      "studentDetails": "Student details",
+      "accountInfoText": "Account Info"
+    },
+    "addStudentForm": {
+      "labels": {
+        "facilityText": "Facility",
+        "admissionNumberText": "Admission number"
+      },
+      "placeholders": {
+        "findFacilityText": "Find faculty",
+        "enterAdmissionNumberText": "Enter admission number"
+      }
+    },
+    "errors": {
+      "failedToFindFaculties": "Failed to find faculties.",
+      "failedToAddStudent": "Failed to add student."
+    },
+    "actions": {
+      "submit": "Submit",
+      "reset": "Reset",
+      "back": "Back"
+    }
+  },
+  "dashboardPage": {
+    "labels": {
+      "attendanceText": "Attendance",
+      "feesText": "Fees",
+      "assignmentsText": "Assignments",
+      "timeTableText": "Time table",
+      "resultsText": "Result(s)",
+      "notificationsText": "Notification(s)",
+      "securityText": "Change password",
+      "getSupportText": "Get Support",
+      "logout": "Log out"
+    }
+  },
+  "changePasswordPage": {
+    "labels": {
+      "changePasswordText": "Change Password"
+    },
+    "changePasswordForm": {
+      "labels": {
+        "currentPasswordText": "Current password",
+        "newPasswordText": "New password",
+        "confirmPasswordText": "Confirm password"
+      },
+      "placeholders": {
+        "enterCurrentPasswordText": "Enter current password",
+        "enterNewPasswordText": "Enter new password",
+        "enterConfirmPasswordText": "Confirm password"
+      },
+      "errors": {
+        "passwordsDoNotMatchText": "Passwords do not match.",
+        "failedToUpdatePasswordText": "Failed to update password. Please try again or contact support."
+      }
+    },
+    "errors": {
+      "failedToGetParentDetails": "Failed to fetch parent details."
+    }
+  },
+  "getSupportPage": {
+    "labels": {
+      "getSupportLabel": "Get Support",
+      "supportText": "For any support request regarding your child, their institution or any other related issue. Please contact us via the methods below.",
+      "callUs": "Call us",
+      "mailUs": "Mail us"
+    }
+  },
+  "timeTablePage": {
+    "labels": {
+      "timeTableText": "Time table"
+    },
+    "daysOfWeek": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "errors": {
+      "failedToFetchTimeTable": "Oops! Failed to fetch time table."
+    }
+  },
+  "resultsPage": {
+    "labels": {
+      "exams": "See list of exam(s)",
+      "grade": "Grade",
+      "youAreExcellentText": "You, are excellent.",
+      "goodWorkText": "Good work! Keep it up.",
+      "betterLuckText": "A decent attempt, better luck next time."
+    },
+    "studentMarksDetailsReport": {
+      "studentName": "Student name",
+      "finalGrade": "Final grade",
+      "overall": "Overall"
+    },
+    "errors": {
+      "failedToFetchExamType": "Failed to fetch exam types",
+      "failedToFindStudentMarks": "Failed to find student marks.",
+      "noExamResultsFound": "Exam results are not available at this time."
+    }
+  }
+}

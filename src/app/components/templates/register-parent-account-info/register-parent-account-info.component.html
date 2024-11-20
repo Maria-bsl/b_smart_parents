@@ -1,0 +1,110 @@
+<form
+  class="flex flex-col space-y-4"
+  [formGroup]="accountInfoService.parentForm"
+>
+  <ng-template matStepLabel>
+    {{ "addStudentPage.labels.accountInfoText" | translate }}
+  </ng-template>
+  <div class="flex flex-col">
+    <ion-text class="mat-body-small !font-semibold">{{
+      "registerPage.registerForm.labels.fullNameText" | translate
+    }}</ion-text>
+    <ng-container>
+      <mat-form-field class="example-full-width">
+        <input
+          type="text"
+          [placeholder]="
+            'registerPage.registerForm.placeholders.enterFullName' | translate
+          "
+          matInput
+          [formControl]="accountInfoService.Parent_Name"
+        />
+        @if (accountInfoService.Parent_Name | hasFormControlError: 'required') {
+        <mat-error>
+          {{ "defaults.cannotBeBlankText" | translate }}
+        </mat-error>
+        }
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <div class="flex flex-col">
+    <ion-text class="mat-body-small !font-semibold">{{
+      "registerPage.registerForm.labels.mobileNumberText" | translate
+    }}</ion-text>
+    <ng-container>
+      <mat-form-field class="example-full-width">
+        <span matTextPrefix>+255 &nbsp;</span>
+        <input
+          type="text"
+          [placeholder]="
+            'registerPage.registerForm.placeholders.mobileNumber' | translate
+          "
+          matInput
+          [formControl]="accountInfoService.Mobile_No"
+        />
+        @if (accountInfoService.Mobile_No | hasFormControlError: 'required') {
+        <mat-error>
+          {{ "defaults.cannotBeBlankText" | translate }}
+        </mat-error>
+        } @else if (accountInfoService.Mobile_No | hasFormControlError:
+        'pattern') {
+        <mat-error>
+          {{
+            "registerPage.registerForm.errors.invalidPhoneNumber" | translate
+          }}
+        </mat-error>
+        }
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <div class="flex flex-col">
+    <ion-text class="mat-body-small !font-semibold">{{
+      "registerPage.registerForm.labels.usernameText" | translate
+    }}</ion-text>
+    <ng-container>
+      <mat-form-field class="example-full-width">
+        <input
+          type="text"
+          [placeholder]="
+            'registerPage.registerForm.placeholders.username' | translate
+          "
+          matInput
+          [formControl]="accountInfoService.User_Name"
+        />
+        @if (accountInfoService.User_Name | hasFormControlError: 'required') {
+        <mat-error>
+          {{ "defaults.cannotBeBlankText" | translate }}
+        </mat-error>
+        }
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <div class="flex flex-col">
+    <ion-text class="mat-body-small !font-semibold">{{
+      "registerPage.registerForm.labels.emailText" | translate
+    }}</ion-text>
+    <ng-container>
+      <mat-form-field class="example-full-width">
+        <input
+          type="text"
+          [placeholder]="
+            'registerPage.registerForm.placeholders.emailAddress' | translate
+          "
+          matInput
+          [formControl]="accountInfoService.Email_Address"
+        />
+        @if (accountInfoService.Email_Address | hasFormControlError: 'required')
+        {
+        <mat-error>
+          {{ "defaults.cannotBeBlankText" | translate }}
+        </mat-error>
+        } @else if (accountInfoService.Email_Address | hasFormControlError:
+        'email') {
+        <mat-error>
+          {{ "registerPage.registerForm.errors.invalidEmail" | translate }}
+        </mat-error>
+        }
+      </mat-form-field>
+    </ng-container>
+  </div>
+</form>

@@ -1,0 +1,90 @@
+<form
+  [formGroup]="studentDetailsService.studentForm"
+  class="flex flex-col space-y-4"
+>
+  <ng-container formArrayName="SDetails">
+    <div
+      formGroupName="{{ ind }}"
+      *ngFor="
+        let sDetail of studentDetailsService.SDetails.controls;
+        index as ind
+      "
+      class="flex flex-col space-y-2"
+    >
+      <div class="flex flex-col">
+        <ion-text class="mat-body-small !font-semibold">{{
+          "addStudentPage.addStudentForm.labels.facilityText" | translate
+        }}</ion-text>
+        <ng-container>
+          <mat-form-field class="example-full-width">
+            <input
+              type="text"
+              [placeholder]="
+                'addStudentPage.addStudentForm.placeholders.findFacilityText'
+                  | translate
+              "
+              matInput
+              formControlName="SearchFacility"
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete class="!bg-white" #auto="matAutocomplete">
+              @for (option of studentDetailsService.filteredFacultiesOptions$|
+              async; track option) {
+              <mat-option [value]="option.Facility_Name">{{
+                option.Facility_Name
+              }}</mat-option>
+              }
+            </mat-autocomplete>
+            @if (sDetail.get('SearchFacility') | hasFormControlError:
+            'required') {
+            <mat-error>
+              {{
+                "registerPage.registerForm.errors.missingSchoolName" | translate
+              }}
+            </mat-error>
+            } @else if (sDetail.get('SearchFacility') | hasFormControlError:
+            'invalidFacultyName') {
+            <mat-error>
+              {{
+                "registerPage.registerForm.errors.schoolNameNotExist"
+                  | translate
+              }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </ng-container>
+      </div>
+      <div class="flex flex-col">
+        <ion-text class="mat-body-small !font-semibold">{{
+          "addStudentPage.addStudentForm.labels.admissionNumberText" | translate
+        }}</ion-text>
+        <mat-form-field>
+          <input
+            formControlName="Admission_No"
+            matInput
+            [placeholder]="
+              'addStudentPage.addStudentForm.placeholders.enterAdmissionNumberText'
+                | translate
+            "
+          />
+          @if (sDetail.get('Admission_No') | hasFormControlError: 'required') {
+          <mat-error>
+            {{
+              "registerPage.registerForm.errors.missingAdmissionNumber"
+                | translate
+            }}
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+  </ng-container>
+  <!-- <div class="mt-4">
+    <button type="ngSubmit" mat-flat-button>
+      {{ "addStudentPage.actions.submit" | translate }}
+    </button>
+    <button mat-button matStepperPrevious>
+      {{ "addStudentPage.actions.back" | translate }}
+    </button>
+  </div> -->
+</form>
