@@ -4,12 +4,13 @@ module.exports = {
   theme: {
     extend: {},
     fontFamily: {
-      // myriadProLight: ["Myriad-Pro-Light"],
-      // myriadProRegular: ["Myriad-Pro-Regular"],
-      // myriadProBold: ["Myriad-Pro-Bold"],
-      // myriadProBlack: ["Myriad-Pro-Black"],
       sora: ["Sora", "Serif"],
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: [],
+    darkTheme: false,
+    styled: true,
+  },
 };

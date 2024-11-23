@@ -43,6 +43,20 @@ export class RegisterAccountInfoService {
     } else {
     }
   }
+  //returns form details as map if form is valid
+  getRegisterParentMap() {
+    const details = new Map<string, any>();
+    let errors = { title: '', message: '' };
+    this.validateForm(errors);
+    if (errors.message) {
+      return details;
+    }
+    details.set('User_Name', this.User_Name.value);
+    details.set('Email_Address', this.Email_Address.value);
+    details.set('Parent_Name', this.Parent_Name.value);
+    details.set('Mobile_No', '0' + this.Mobile_No.value);
+    return details;
+  }
   get User_Name() {
     return this.parentForm.get('User_Name') as FormControl;
   }

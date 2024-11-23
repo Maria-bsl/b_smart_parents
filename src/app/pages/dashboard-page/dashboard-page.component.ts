@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatChipsModule } from '@angular/material/chips';
 import {
-  IonBackButton,
   IonText,
+  IonBackButton,
   IonButtons,
   IonContent,
   IonTitle,
@@ -29,6 +29,8 @@ import { zip } from 'rxjs';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { UsersManagementService } from 'src/app/services/users-management/users-management.service';
 import { DashboardModule } from 'src/app/core/types/dashboard-module';
+import { DashboardService } from 'src/app/services/pages/dashboard-service/dashboard.service';
+import { AccumulateStudentInvoicePipe } from 'src/app/core/pipes/accumulate-student-invoice/accumulate-student-invoice.pipe';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -37,8 +39,6 @@ import { DashboardModule } from 'src/app/core/types/dashboard-module';
   standalone: true,
   imports: [
     CommonModule,
-    CdkDropList,
-    CdkDrag,
     IonTitle,
     IonContent,
     IonText,
@@ -50,17 +50,15 @@ import { DashboardModule } from 'src/app/core/types/dashboard-module';
     MatGridListModule,
     MatRippleModule,
     RouterLink,
+    AccumulateStudentInvoicePipe,
+    IonBackButton,
+    IonButtons,
   ],
 })
 export class DashboardPageComponent implements OnInit {
-  selectedStudent: GetSDetailStudents = JSON.parse(
-    localStorage.getItem('selectedStudent')!
-  );
   constructor(
     private appConfig: AppConfigService,
-    private tr: TranslateService,
-    private _unsubscriber: UnsubscriberService,
-    private usersService: UsersManagementService
+    public dashboardService: DashboardService
   ) {
     this.registerIcons();
   }
@@ -87,26 +85,15 @@ export class DashboardPageComponent implements OnInit {
       ],
       `/assets/bootstrap-icons`
     );
-    this.appConfig.addIcons(['ic_holiday', 'ic_holiday_blue'], `/assets/figma`);
+    this.appConfig.addIcons(
+      ['ic_holiday', 'ic_holiday_blue', 'fees-vector'],
+      `/assets/figma`
+    );
   }
-  ngOnInit() {}
+  ngOnInit() {
+    this.dashboardService.initDashboard();
+  }
   logoutClicked(event: any) {
-    let msg1Obs = this.tr.get('defaults.confirm');
-    let msg2Obs = this.tr.get('defaults.dialogs.sureLogoutText');
-    let merged = zip(msg1Obs, msg2Obs);
-    merged.pipe(this._unsubscriber.takeUntilDestroy).subscribe({
-      next: (results) => {
-        let [msg1, msg2] = results;
-        let dialogRef = this.appConfig.openConfirmMessageBox(msg1, msg2);
-        dialogRef.componentInstance.confirmed
-          .asObservable()
-          .pipe(this._unsubscriber.takeUntilDestroy)
-          .subscribe({
-            next: () => {
-              this.usersService.logOutUser();
-            },
-          });
-      },
-    });
+    this.dashboardService.logUserOut();
   }
 }

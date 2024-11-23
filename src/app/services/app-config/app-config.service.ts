@@ -9,6 +9,8 @@ import { ConfirmMessageBoxComponent } from 'src/app/components/dialogs/confirm-m
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, zip } from 'rxjs';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
+import { AppLauncher } from '@capacitor/app-launcher';
+import { isPlatform } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +67,14 @@ export class AppConfigService {
   getToken() {
     return localStorage.getItem('token');
   }
+  getCssVariable(variableName: string): string {
+    // Access the root element
+    const root = document.documentElement;
+    // Get the computed style
+    const style = getComputedStyle(root);
+    // Return the value of the variable
+    return style.getPropertyValue(variableName).trim();
+  }
   async startLoading() {
     if (this.loading) this.loading = null;
     let attributes = new Map();
@@ -75,6 +85,19 @@ export class AppConfigService {
     });
     await this.loading.present();
     return this.loading;
+  }
+  openExternalLink(link: string) {
+    window.open(link, '_blank', 'noopener,noreferrer');
+  }
+  async launchApp(packageName: string) {
+    const { value } = await AppLauncher.canOpenUrl({
+      url: packageName,
+    });
+    if (value) {
+      await AppLauncher.openUrl({ url: packageName });
+    } else {
+      throw Error(`Failed to launch application ${packageName}.`);
+    }
   }
   initTranslations() {
     this.tr.use('en');

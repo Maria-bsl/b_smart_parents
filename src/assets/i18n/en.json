@@ -10,14 +10,16 @@
     "labels": {
       "from": "From",
       "to": "To",
-      "download": "Download"
+      "download": "Download",
+      "all": "All"
     },
     "dialogs": {
       "sureLogoutText": "Are you sure you want to log out?"
     },
     "errors": {
       "invalidForm": "Invalid form",
-      "notAvailableText": "Not Available"
+      "notAvailableText": "Not Available",
+      "somethingWentWrongTryAgain": "Something went wrong! Please try again later or contact support."
     }
   },
   "registerPage": {
@@ -50,6 +52,11 @@
         "missingSchoolName": "A school name is missing",
         "missingAdmissionNumber": "Provide an admission number.",
         "schoolNameNotExist": "This school name does not exist."
+      },
+      "success": {
+        "successRegisterText": "Successfully registered!",
+        "emailSentMessage": "An email was to {{}} with your login credentials.",
+        "openMailApp": "Open your mail app."
       }
     }
   },
@@ -111,6 +118,9 @@
     "errors": {
       "failedToFindFaculties": "Failed to find faculties.",
       "failedToAddStudent": "Failed to add student."
+    },
+    "success": {
+      "successAddStudent": "Student added successfully!"
     },
     "actions": {
       "submit": "Submit",
@@ -196,6 +206,33 @@
       "failedToFetchExamType": "Failed to fetch exam types",
       "failedToFindStudentMarks": "Failed to find student marks.",
       "noExamResultsFound": "Exam results are not available at this time."
+    }
+  },
+  "feesPage": {
+    "labels": {
+      "feesText": "Fees",
+      "invoiceText": "Invoice",
+      "pendingText": "Pending",
+      "paidText": "Paid",
+      "receiptNo": "Receipt No.",
+      "school": "School",
+      "dueDate": "Date due",
+      "requestedAmount": "Amount",
+      "invoiceNo": "Invoice No.",
+      "download": "Download",
+      "noAvailableFees": "No fees available."
+    },
+    "actions": {
+      "payNow": "Pay Now"
+    }
+  },
+  "attendance": {
+    "labels": {
+      "attendance": "Attendance",
+      "absent": "Absent",
+      "present": "Present",
+      "notAvailable": "Not available",
+      "attendanceRecord": "Attendance record"
     }
   }
 }

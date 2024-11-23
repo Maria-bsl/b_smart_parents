@@ -1,14 +1,14 @@
-<ion-content class="relative">
+<!-- <ion-content class="relative">
   <div
     id="bg-cover"
     class="absolute bg-[#015aa8] top-0 left-0 right-0 bottom-0 w-full h-full z-0"
   >
-    <!-- <img
-      class="object-fill w-full h-full z-0"
+    <img
+      class="hidden object-fill w-full h-full z-0"
       src="assets/components/sign_in_bg.png"
       alt=""
       srcset=""
-    /> -->
+    />
   </div>
   <div class="absolute top-16 left-0 right-0 w-full">
     <img
@@ -27,13 +27,13 @@
     >
       <div class="flex flex-col">
         <ion-title class="!text-white text-2xl">{{
-          selectedStudent.SFullName
+          dashboardService.selectedStudent.SFullName
         }}</ion-title>
         <ion-title class="!text-gray-300 mat-title-small !font-sora">
-          {{ selectedStudent.Class_Name }}
+          {{ dashboardService.selectedStudent.Class_Name }}
         </ion-title>
         <mat-chip class="w-fit ml-5 academic-year-chip">
-          {{ selectedStudent.Acad_Year }}
+          {{ dashboardService.selectedStudent.Acad_Year }}
         </mat-chip>
       </div>
       <button
@@ -60,9 +60,11 @@
                 class="icon-button-outter-color !scale-x-150 !scale-y-150"
               ></mat-icon>
             </button>
-            <ion-text class="mat-headline-medium !font-semibold"
-              >30.32%</ion-text
-            >
+            <ion-text class="mat-headline-medium !font-semibold">
+              @if (dashboardService.overallAttendance$) {
+              {{ (dashboardService.overallAttendance$ | async)?.Present }}
+              }
+            </ion-text>
             <ion-text class="mat-body-medium !font-semibold placeholer-text">
               {{ "dashboardPage.labels.attendanceText" | translate }}
             </ion-text>
@@ -79,9 +81,15 @@
                 class="fees-icon-button-outter-color !scale-x-150 !scale-y-150"
               ></mat-icon>
             </button>
-            <ion-text class="mat-title-large !font-semibold"
-              >234,000 TZS</ion-text
-            >
+            <ion-text class="mat-title-large !font-semibold">
+              @if (dashboardService.pendingStudentInvoices$) {
+              {{
+                (dashboardService.pendingStudentInvoices$ | async)!
+                  | accumulateArrayValue : "Pending_Amount"
+                  | currency : "TZS"
+              }}
+              }
+            </ion-text>
             <ion-text class="mat-body-medium !font-semibold placeholer-text">{{
               "dashboardPage.labels.feesText" | translate
             }}</ion-text>
@@ -97,7 +105,11 @@
             }}</ion-text>
           </div>
         </mat-grid-tile>
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/fees'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon
               matPrefix
@@ -136,15 +148,11 @@
             }}</ion-text>
           </div>
         </mat-grid-tile>
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="bell-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.notificationsText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/attendance'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="calendar-check-fill"></mat-icon>
             <ion-text class="mat-body-medium">{{
@@ -191,4 +199,208 @@
       </mat-grid-list>
     </div>
   </div>
+</ion-content> -->
+
+<ion-content>
+  <div
+    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
+  >
+    <div class="flex-none text-white py-10">
+      <mat-toolbar
+        class="flex flex-row items-center justify-between !bg-transparent w-full"
+      >
+        <div class="flex flex-col">
+          <ion-title class="!text-white text-2xl">{{
+            dashboardService.selectedStudent.SFullName
+          }}</ion-title>
+          <ion-title class="!text-gray-300 mat-title-small !font-sora">
+            {{ dashboardService.selectedStudent.Class_Name }}
+          </ion-title>
+          <mat-chip class="w-fit ml-5 academic-year-chip">
+            {{ dashboardService.selectedStudent.Acad_Year }}
+          </mat-chip>
+        </div>
+        <button
+          mat-icon-button
+          class="icon-primary-color"
+          aria-label="Example icon button with a vertical three dot icon"
+        >
+          <mat-icon
+            class="text-white"
+            matPrefix
+            svgIcon="person-fill"
+          ></mat-icon>
+        </button>
+      </mat-toolbar>
+    </div>
+    <span class="my-8"></span>
+    <div
+      class="grow relative h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
+    >
+      <div class="absolute -top-16 left-8 right-8">
+        <mat-grid-list
+          class="w-full h-full"
+          cols="2"
+          gutterSize="8px"
+          rowHeight="200px"
+        >
+          <mat-grid-tile class="rounded-lg shadow-sm bg-[#3FB74B] relative">
+            <div class="flex flex-col w-full h-full p-4 !space-y-4">
+              <button class="w-20 h-20 bg-[#3E5444] rounded-full">
+                <mat-icon
+                  matPrefix
+                  svgIcon="student-person-svgrepo-com"
+                  class="text-[#3FB74B] !scale-x-150 !scale-y-150"
+                ></mat-icon>
+              </button>
+              <ion-text class="mat-headline-medium !font-semibold">
+                @if (dashboardService.overallAttendance$) {
+                {{ (dashboardService.overallAttendance$ | async)?.Present }}
+                } @else { 0% }
+              </ion-text>
+              <ion-text class="mat-body-large !font-semibold placeholer-text">
+                {{ "dashboardPage.labels.attendanceText" | translate }}
+              </ion-text>
+            </div>
+          </mat-grid-tile>
+          <mat-grid-tile class="rounded-lg bg-[#E06689] relative">
+            <div class="flex flex-col w-full h-full p-4 !space-y-4">
+              <button
+                class="w-20 h-20 bg-[var(--md-sys-color-on-primary)] rounded-full"
+              >
+                <mat-icon
+                  matPrefix
+                  svgIcon="fees-vector"
+                  class="text-[#3FB74B] !scale-x-150 !scale-y-150"
+                ></mat-icon>
+              </button>
+              <ion-text class="mat-title-large !font-semibold">
+                @if (dashboardService.pendingStudentInvoices$) {
+                {{
+                  (dashboardService.pendingStudentInvoices$ | async)!
+                    | accumulateArrayValue : "Pending_Amount"
+                    | currency : "TZS"
+                }}
+                }
+              </ion-text>
+              <ion-text class="mat-body-large !font-semibold placeholer-text">{{
+                "dashboardPage.labels.feesText" | translate
+              }}</ion-text>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+      <!-- <p class="!mt-28">Helo world</p> -->
+      <!-- <div class="flex flex-col w-full">
+
+       </div> -->
+      <mat-grid-list class="!mt-28" cols="2" gutterSize="8px" rowHeight="100px">
+        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.assignmentsText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/fees'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon
+              matPrefix
+              svgIcon="ic_holiday_blue"
+              class="scale-150"
+            ></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.feesText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/time-table'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="calendar-date-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.timeTableText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/results'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon
+              matPrefix
+              svgIcon="file-earmark-bar-graph-fill"
+            ></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.resultsText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/attendance'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="calendar-check-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.attendanceText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/change-password'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="lock-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.securityText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/get-support'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="headset"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.getSupportText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          (click)="logoutClicked($event)"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="box-arrow-right"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.logout" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+  </div>
+  <img
+    class="w-full h-full z-0"
+    src="assets/components/test-frame-1.png"
+    alt=""
+    srcset=""
+  />
 </ion-content>

@@ -45,7 +45,7 @@
               id="time-table-form"
               (ngSubmit)="submitTimeTableForm()"
               [formGroup]="timeTableFormGroup"
-              class="flex flex-row items-center justify-between w-full space-x-2"
+              class="flex-row items-center justify-between w-full space-x-2 hidden"
             >
               <div class="flex flex-col !w-1/2">
                 <ion-text class="placeholer-text">{{
@@ -84,14 +84,118 @@
                 </mat-form-field>
               </div>
             </form>
-            <div class="flex flex-row items-center justify-end">
+            <div class="hidden flex-row items-center justify-end">
               <button form="time-table-form" type="ngSubmit" mat-flat-button>
                 {{ "addStudentPage.actions.submit" | translate }}
               </button>
             </div>
           </div>
           <mat-tab-group
+            #tabGroup
             class="w-full"
+            dynamicHeight
+            fitInkBarToContent
+            disablePagination
+            mat-stretch-tabs="true"
+            mat-align-tabs="start"
+            *ngIf="timeTable$ | async as timeTable; else noTimeTableFound"
+          >
+            <ng-container *ngFor="let day of timeTable | availableWeekdays">
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <span class="text-center mat-body-small">
+                    {{
+                      (
+                        "timeTablePage.daysOfWeek." + day.toLocaleLowerCase()
+                        | translate
+                      ).substring(0, 3)
+                    }}
+                  </span>
+                </ng-template>
+                <ng-template matTabContent>
+                  <mat-list class="!space-y-4 !my-2">
+                    <ng-container
+                      *ngFor="let lesson of timeTable[day]; index as ind"
+                    >
+                      @if (lesson?.Type | isPeriodScheduleType) {
+                      <mat-card
+                        appearance="outlined"
+                        class="w-full !bg-white p-2 flex flex-col space-y-2"
+                      >
+                        <mat-card-title
+                          class="mat-body-large !font-semibold capitalize text-black"
+                        >
+                          {{ lesson?.Subject?.toLocaleLowerCase() }}
+                        </mat-card-title>
+                        <mat-card-subtitle
+                          class="placeholer-text mat-body-small"
+                        >
+                          {{ lesson?.Time }}
+                        </mat-card-subtitle>
+                        <mat-divider></mat-divider>
+                        <div
+                          class="flex flex-row items-center justify-between w-full"
+                        >
+                          <p class="placeholer-text mat-body-small">
+                            {{ lesson?.Teacher }}
+                          </p>
+                          <p class="mat-body-small text-black">
+                            {{ lesson?.Type | scheduleTypePipe }}
+                          </p>
+                        </div>
+                      </mat-card>
+                      } @else if (lesson?.Type | isBreakScheduleType) {
+                      <mat-card
+                        appearance="outlined"
+                        class="w-full !bg-white p-2 flex flex-col space-y-2"
+                      >
+                        <div
+                          class="flex flex-row items-center justify-between py-1"
+                        >
+                          <div class="flex flex-col">
+                            <mat-card-title
+                              class="mat-body-large !font-semibold text-black"
+                            >
+                              {{ lesson?.Type | scheduleTypePipe }}
+                            </mat-card-title>
+                            <mat-card-subtitle
+                              class="placeholer-text mat-body-small"
+                            >
+                              {{ lesson?.Time }}
+                            </mat-card-subtitle>
+                          </div>
+                          <div class="h-14 w-14">
+                            <img
+                              src="assets/components/break_img.png"
+                              alt=""
+                              srcset=""
+                              class="w-full h-full object-fill"
+                            />
+                          </div>
+                        </div>
+                      </mat-card>
+                      } @else {
+                      <div class="w-full h-full grid place-items-center">
+                        <ion-text
+                          class="mt-16 w-full text-center mat-title-medium"
+                          >{{
+                            "defaults.errors.notAvailableText" | translate
+                          }}</ion-text
+                        >
+                      </div>
+                      }
+                    </ng-container>
+                  </mat-list>
+                </ng-template>
+              </mat-tab>
+            </ng-container>
+          </mat-tab-group>
+          <!-- <mat-tab-group
+            class="w-full nav-group"
+            dynamicHeight
+            disablePagination
+            mat-stretch-tabs="true"
+            mat-align-tabs="start"
             *ngIf="timeTable$ | async as timeTable; else noTimeTableFound"
           >
             <ng-container *ngFor="let day of timeTable | availableWeekdays">
@@ -174,7 +278,7 @@
                 </mat-list>
               </mat-tab>
             </ng-container>
-          </mat-tab-group>
+          </mat-tab-group> -->
           <ng-template #noTimeTableFound>
             <div class="w-hull h-full grid place-items-center">
               <ion-text class="mt-52 text-black mat-title-large">{{

@@ -5,16 +5,31 @@ import {
 } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
-import { catchError, concatMap, from, map, retry, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  from,
+  map,
+  Observable,
+  retry,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
 import { isPlatform } from '@ionic/angular/standalone';
-import { AddStudent } from 'src/app/core/forms/f-add-student';
+import { FRegisterParent } from 'src/app/core/forms/f-add-student';
 import { FTimeTableForm } from 'src/app/core/forms/f-time-table-form';
 import { FExamType } from 'src/app/core/forms/f-exam-type';
 import { FStudentMarksForm } from 'src/app/core/forms/f-student-marks-form';
 import { environment } from 'src/environments/environment';
 import { ErrorStatusCode } from 'src/app/core/enums/error-status-code';
 import { ErrorResponse } from 'src/app/core/interfaces/error-response';
+import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
+import {
+  StudentInvoice,
+  StudentPendingInvoice,
+} from 'src/app/core/types/student-invoices';
+import { AttendanceScore } from 'src/app/core/types/attendance';
 
 //const REQUEST_TOKEN_ENDPOINT = 'http://183.83.33.156:92/Mobile';
 
@@ -50,7 +65,7 @@ export class ApiConfigService {
       catchError((err: HttpErrorResponse) => {
         return this.handleError(err);
       })
-    );
+    ) as Observable<any>;
   }
   signIn(body: FLoginForm) {
     return this.performPost(
@@ -66,9 +81,18 @@ export class ApiConfigService {
       {}
     );
   }
-  addStudent(body: AddStudent) {
+  addStudent(body: FRegisterParent) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/AddStudent`,
+      body,
+      {}
+    );
+  }
+  getAttendance(body: StudentDetailsForm) {
+    return this.performPost(
+      `
+      ${this.baseUrl}/SchoolDetails/GetAttendance
+      `,
       body,
       {}
     );
@@ -101,6 +125,31 @@ export class ApiConfigService {
       {}
     );
   }
+  getStudentInvoices(body: StudentDetailsForm) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetStudentInvoices`,
+      body,
+      {}
+    );
+  }
+  getStudentPendingInvoices(
+    body: StudentDetailsForm
+  ): Observable<StudentPendingInvoice[]> {
+    return this.performPost(
+      `
+      ${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices
+      `,
+      body,
+      {}
+    );
+  }
+  getStudentPaidInvoices(body: StudentDetailsForm) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetStudentPaidInvoices`,
+      body,
+      {}
+    );
+  }
   getStudentMarks(body: FStudentMarksForm) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetStudentMarks`,
@@ -111,6 +160,20 @@ export class ApiConfigService {
   getStudentMarkDetails(body: FStudentMarksForm) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetStudentMarks_Details`,
+      body,
+      {}
+    );
+  }
+  getAttendanceScore(body: StudentDetailsForm): Observable<AttendanceScore[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetStudentAttendance`,
+      body,
+      {}
+    );
+  }
+  registerParent(body: FRegisterParent) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/ParentReg`,
       body,
       {}
     );

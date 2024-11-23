@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MessageBox } from 'src/app/core/types/message-box';
 import { IonText, IonTitle } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-message-box-dialog',
@@ -23,9 +24,9 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogActions,
     MatDialogClose,
     MatButtonModule,
-    IonText,
-    IonTitle,
     TranslateModule,
+    MatDividerModule,
+    MatButtonModule,
   ],
 })
 export class MessageBoxDialogComponent implements OnInit {

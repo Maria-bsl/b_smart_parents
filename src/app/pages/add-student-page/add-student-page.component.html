@@ -3,12 +3,12 @@
     id="bg-cover"
     class="absolute bg-[#015aa8] top-0 left-0 right-0 bottom-0 w-full h-full z-0"
   >
-    <!-- <img
-      class="object-fill w-full h-full z-0"
+    <img
+      class="hidden object-fill w-full h-full z-0"
       src="assets/components/sign_in_bg.png"
       alt=""
       srcset=""
-    /> -->
+    />
   </div>
   <div class="absolute top-16 left-0 right-0 w-full">
     <img
@@ -37,84 +37,31 @@
       <div
         class="bg-white px-12 py-8 grow w-full h-auto rounded-tl-[3.5rem] rounded-tr-[3.5rem] flex flex-col"
       >
-        <mat-stepper orientation="vertical" [linear]="isLinear">
-          <mat-step [stepControl]="studentForm">
-            <form (ngSubmit)="submitAddStudentForm()" [formGroup]="studentForm">
-              <ng-template matStepLabel>
-                {{ "addStudentPage.labels.fillFormToContinueText" | translate }}
-              </ng-template>
-              <ng-container formArrayName="SDetails">
-                <div
-                  formGroupName="{{ ind }}"
-                  *ngFor="let sDetail of SDetails.controls; index as ind"
-                  class="flex flex-col space-y-2"
-                >
-                  <div class="flex flex-col">
-                    <ion-text class="mat-body-small !font-myriadProBold">{{
-                      "addStudentPage.addStudentForm.labels.facilityText"
-                        | translate
-                    }}</ion-text>
-                    <ng-container>
-                      <mat-form-field class="example-full-width">
-                        <input
-                          type="text"
-                          [placeholder]="
-                            'addStudentPage.addStudentForm.placeholders.findFacilityText'
-                              | translate
-                          "
-                          matInput
-                          formControlName="SearchFacility"
-                          [matAutocomplete]="auto"
-                        />
-                        <mat-autocomplete #auto="matAutocomplete">
-                          @for (option of filteredOptions$ | async; track
-                          option) {
-                          <mat-option [value]="option.Facility_Name">{{
-                            option.Facility_Name
-                          }}</mat-option>
-                          }
-                        </mat-autocomplete>
-                        <mat-error>
-                          {{
-                            "loginPage.loginForm.errors.blankPassword"
-                              | translate
-                          }}
-                        </mat-error>
-                      </mat-form-field>
-                    </ng-container>
-                  </div>
-                  <div class="flex flex-col">
-                    <ion-text class="mat-body-small !font-myriadProBold">{{
-                      "addStudentPage.addStudentForm.labels.admissionNumberText"
-                        | translate
-                    }}</ion-text>
-                    <mat-form-field>
-                      <input
-                        formControlName="Admission_No"
-                        matInput
-                        [placeholder]="
-                          'addStudentPage.addStudentForm.placeholders.enterAdmissionNumberText'
-                            | translate
-                        "
-                      />
-                      <mat-error>
-                        {{
-                          "loginPage.loginForm.errors.blankPassword" | translate
-                        }}
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                </div>
-              </ng-container>
-              <div class="mt-4">
-                <button type="submit" mat-flat-button>
-                  {{ "addStudentPage.actions.submit" | translate }}
-                </button>
-                <button (click)="resetForm()" mat-button>
-                  {{ "addStudentPage.actions.reset" | translate }}
-                </button>
-              </div>
-            </form>
+        <mat-stepper
+          class="!bg-transparent"
+          orientation="vertical"
+          [linear]="true"
+        >
+          <mat-step [stepControl]="studentDetailsFormService.studentForm">
+            <ng-template matStepLabel>
+              {{ "addStudentPage.labels.studentDetails" | translate }}
+            </ng-template>
+            <app-student-details-form
+              [studentDetailsService]="studentDetailsFormService"
+            >
+            </app-student-details-form>
+            <div class="mt-4">
+              <button
+                (click)="submitStudentForm($event)"
+                type="submit"
+                mat-flat-button
+              >
+                {{ "addStudentPage.actions.submit" | translate }}
+              </button>
+              <button (click)="resetForm($event)" mat-button>
+                {{ "addStudentPage.actions.reset" | translate }}
+              </button>
+            </div>
           </mat-step>
         </mat-stepper>
       </div>

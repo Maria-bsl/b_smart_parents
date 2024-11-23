@@ -1,0 +1,563 @@
+<ion-content class="relative">
+  <div
+    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
+  >
+    <div class="flex-none text-white py-7">
+      <mat-toolbar class="flex flex-row items-center !bg-transparent w-full">
+        <ion-buttons slot="start">
+          <ion-back-button
+            class="text-white"
+            defaultHref="/tabs/tab-1"
+          ></ion-back-button>
+        </ion-buttons>
+        <ion-text class="!text-white">{{
+          "feesPage.labels.feesText" | translate
+        }}</ion-text>
+      </mat-toolbar>
+    </div>
+    <div
+      mat-tab-group
+      class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
+    >
+      <mat-tab-group
+        #tabGroup
+        dynamicHeight
+        disablePagination
+        mat-stretch-tabs="true"
+        mat-align-tabs="start"
+      >
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span
+              [class]="
+                tabGroup.selectedIndex === 0
+                  ? '!text-[var(--sys-primary)]'
+                  : 'text-gray-500'
+              "
+              class="text-center mat-body-small"
+            >
+              {{ "defaults.labels.all" | translate }}
+            </span>
+          </ng-template>
+          <ng-template matTabContent>
+            <ng-template #allInvoices>
+              <mat-list class="my-2 w-full flex flex-col !space-y-4">
+                @for (pendingInvoices of studentPendingInvoices$ | async; track
+                pendingInvoices) {
+                <mat-card class="!bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.receiptNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        pendingInvoices.Fee_Type
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            pendingInvoices.Expired_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          pendingInvoices.Pending_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-flat-button
+                    >
+                      <a>{{ "feesPage.actions.payNow" | translate }}</a>
+                      <mat-icon svgIcon="arrow-right"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                } @for (studentInvoices of studentInvoices$ | async; track
+                studentInvoices) {
+                <mat-card class="mt-2 !bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.invoiceNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        studentInvoices.Invoice_No
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            studentInvoices.Invoice_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          studentInvoices.Invoice_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-button
+                    >
+                      <a>{{ "feesPage.labels.download" | translate }}</a>
+                      <mat-icon svgIcon="download"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                } @for (studentPaidInvoice of studentPaidInvoice$ | async; track
+                studentPaidInvoice) {
+                <mat-card class="mt-2 !bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.receiptNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        studentPaidInvoice.Receipt_No
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            studentPaidInvoice.Paid_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          studentPaidInvoice.Paid_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-button
+                    >
+                      <a>{{ "feesPage.labels.download" | translate }}</a>
+                      <mat-icon svgIcon="download"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                }
+              </mat-list>
+            </ng-template>
+            <div
+              *ngIf="
+                (studentInvoices$ | async)?.length === 0 &&
+                  (studentPendingInvoices$ | async)?.length === 0 &&
+                  (studentPaidInvoice$ | async)?.length === 0;
+                else allInvoices
+              "
+            >
+              <span class="!py-2">{{
+                "feesPage.labels.noAvailableFees" | translate
+              }}</span>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span
+              [class]="
+                tabGroup.selectedIndex === 1
+                  ? '!text-[var(--sys-primary)]'
+                  : 'text-gray-500'
+              "
+              class="text-center mat-body-small"
+            >
+              {{ "feesPage.labels.invoiceText" | translate }}
+            </span>
+          </ng-template>
+          <ng-template matTabContent>
+            <ng-template #invoiceTemplate>
+              <mat-list class="w-full flex flex-col">
+                @for (studentInvoices of studentInvoices$ | async; track
+                studentInvoices) {
+                <mat-card class="mt-2 !bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.invoiceNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        studentInvoices.Invoice_No
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            studentInvoices.Invoice_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          studentInvoices.Invoice_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-button
+                    >
+                      <a>{{ "feesPage.labels.download" | translate }}</a>
+                      <mat-icon svgIcon="download"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                }
+              </mat-list>
+            </ng-template>
+            <div
+              *ngIf="
+                (studentInvoices$ | async)?.length === 0;
+                else invoiceTemplate
+              "
+            >
+              <span class="!py-2">{{
+                "feesPage.labels.noAvailableFees" | translate
+              }}</span>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span
+              [class]="
+                tabGroup.selectedIndex === 2
+                  ? '!text-[var(--sys-primary)]'
+                  : 'text-gray-500'
+              "
+              class="text-center mat-body-small"
+            >
+              {{ "feesPage.labels.pendingText" | translate }}
+            </span>
+          </ng-template>
+          <ng-template matTabContent>
+            <ng-template #pendingInvs>
+              <mat-list class="flex flex-col w-full">
+                @for (pendingInvoices of studentPendingInvoices$ | async; track
+                pendingInvoices) {
+                <mat-card class="!bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.receiptNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        pendingInvoices.Fee_Type
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            pendingInvoices.Expired_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          pendingInvoices.Pending_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-flat-button
+                    >
+                      <a>{{ "feesPage.actions.payNow" | translate }}</a>
+                      <mat-icon svgIcon="arrow-right"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                }
+              </mat-list>
+            </ng-template>
+            <div
+              *ngIf="
+                (studentPendingInvoices$ | async)?.length === 0;
+                else pendingInvs
+              "
+            >
+              <span class="!py-2">{{
+                "feesPage.labels.noAvailableFees" | translate
+              }}</span>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span
+              [class]="
+                tabGroup.selectedIndex === 3
+                  ? '!text-[var(--sys-primary)]'
+                  : 'text-gray-500'
+              "
+              class="text-center mat-body-small"
+            >
+              {{ "feesPage.labels.paidText" | translate }}
+            </span>
+          </ng-template>
+          <ng-template matTabContent>
+            <ng-template #paidInvoices>
+              <mat-list class="w-full flex flex-col">
+                @for (studentPaidInvoice of studentPaidInvoice$ | async; track
+                studentPaidInvoice) {
+                <mat-card class="mt-2 !bg-transparent" appearance="outlined">
+                  <mat-card-content class="w-full flex flex-col">
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.receiptNo" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle class="mat-body-medium">{{
+                        studentPaidInvoice.Receipt_No
+                      }}</mat-card-subtitle>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div class="flex flex-col w-full space-y-1">
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.school" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            feesService.selectedStudent.Facility_Name.toLocaleLowerCase()
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                      <div
+                        class="w-full h-full flex flex-row items-center justify-between"
+                      >
+                        <mat-card-subtitle class="mat-body-small pr-2">{{
+                          "feesPage.labels.dueDate" | translate
+                        }}</mat-card-subtitle>
+                        <mat-card-subtitle
+                          class="mat-body-medium text-right truncate capitalize"
+                          >{{
+                            studentPaidInvoice.Paid_Date | date : "dd MMM yyyy"
+                          }}
+                        </mat-card-subtitle>
+                      </div>
+                    </div>
+                    <mat-divider class="w-full !my-2"></mat-divider>
+                    <div
+                      class="w-full h-full flex flex-row items-center justify-between"
+                    >
+                      <mat-card-subtitle class="mat-body-small">{{
+                        "feesPage.labels.requestedAmount" | translate
+                      }}</mat-card-subtitle>
+                      <mat-card-subtitle
+                        class="mat-body-medium !font-semibold"
+                        >{{
+                          studentPaidInvoice.Paid_Amount | currency : "TZS"
+                        }}</mat-card-subtitle
+                      >
+                    </div>
+                    <button
+                      class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+                      mat-button
+                    >
+                      <a>{{ "feesPage.labels.download" | translate }}</a>
+                      <mat-icon svgIcon="download"></mat-icon>
+                    </button>
+                  </mat-card-content>
+                </mat-card>
+                }
+              </mat-list>
+            </ng-template>
+
+            <div
+              *ngIf="
+                (studentPaidInvoice$ | async)?.length === 0;
+                else paidInvoices
+              "
+            >
+              <span class="!py-2">{{
+                "feesPage.labels.noAvailableFees" | translate
+              }}</span>
+            </div>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+
+      <br /><br />
+    </div>
+  </div>
+  <img
+    class="w-full h-full z-0"
+    src="assets/components/test-frame-1.png"
+    alt=""
+    srcset=""
+  />
+</ion-content>

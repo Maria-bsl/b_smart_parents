@@ -39,6 +39,11 @@ import { UsersManagementService } from 'src/app/services/users-management/users-
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FacilitiesService } from 'src/app/services/facilities/facilities.service';
+import { StudentDetailsFormComponent } from 'src/app/components/templates/student-details-form/student-details-form.component';
+import { StudentDetailsFormService } from 'src/app/services/student-details-form-service/student-details-form.service';
+import { FRegisterParent } from 'src/app/core/forms/f-add-student';
+import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-add-student-page',
@@ -59,99 +64,23 @@ import { FacilitiesService } from 'src/app/services/facilities/facilities.servic
     MatButtonModule,
     CommonModule,
     MatAutocompleteModule,
+    StudentDetailsFormComponent,
   ],
 })
 export class AddStudentPageComponent implements OnInit {
-  //facultiesOptions$!: Observable<GetFacilities[]>;
-  //faculties$ = new Subject<GetFacilities[]>();
-  faculties$: Observable<GetFacilities[] | null> =
-    this.facultiesService.faculties$.asObservable();
-  filteredOptions$: Observable<GetFacilities[]> = of();
-  isLinear: boolean = true;
-  studentForm: FormGroup = this.fb.group({
-    SDetails: this.fb.array(
-      [
-        this.fb.group({
-          Admission_No: this.fb.control('', [Validators.required]),
-          Facility_Reg_Sno: this.fb.control('', []),
-          SearchFacility: this.fb.control('', [Validators.required]),
-        }),
-      ],
-      []
-    ),
-  });
   constructor(
     private appConfig: AppConfigService,
-    private facultiesService: FacilitiesService,
-    private fb: FormBuilder,
-    private _unsubscriber: UnsubscriberService
+    public studentDetailsFormService: StudentDetailsFormService
   ) {}
-  private facultyChangedEventHandler() {
-    let facilityControl = (this.SDetails.controls.at(0) as FormGroup).get(
-      'SearchFacility'
-    )! as FormControl;
-    this.filteredOptions$ = facilityControl.valueChanges.pipe(
-      startWith(''),
-      switchMap((value) => this._filter(value || ''))
-    );
+  ngOnInit(): void {}
+  submitStudentForm(event: any) {
+    this.studentDetailsFormService.submitForm();
+    // this.appConfig.openAlertMessageBox(
+    //   'Delete Folder',
+    //   "This can't be undone."
+    // );
   }
-  private _filter(value: string) {
-    const filterValue = value.toLocaleLowerCase();
-    return this.faculties$.pipe(
-      map((arr) =>
-        arr!.filter((val) =>
-          val.Facility_Name.toLocaleLowerCase().includes(filterValue)
-        )
-      )
-    );
-  }
-  ngOnInit() {
-    this.facultiesService.getFacultiesList();
-    this.faculties$.pipe(this._unsubscriber.takeUntilDestroy).subscribe({
-      next: (faculties) => {
-        if (faculties) {
-          this.faculties$ = of(faculties);
-          this.facultyChangedEventHandler();
-        }
-      },
-    });
-  }
-  goBack() {
-    this.appConfig.navigateBack();
-  }
-  resetForm() {
-    this.studentForm.reset();
-  }
-  submitAddStudentForm() {
-    if (this.studentForm.valid) {
-      let sDetail = this.SDetails.controls.at(0) as FormGroup;
-      this.filteredOptions$
-        .pipe(this._unsubscriber.takeUntilDestroy)
-        .subscribe({
-          next: (faculties) => {
-            let facilityName = sDetail?.get('SearchFacility')?.value;
-            let found = faculties.find(
-              (e) =>
-                e.Facility_Name.toLocaleLowerCase() ===
-                facilityName.toLocaleLowerCase()
-            );
-            let admissionNo = sDetail?.get('Admission_No')?.value;
-            if (found) {
-              let studentForm = new Map();
-              studentForm.set('Admission_No', `${admissionNo}`);
-              studentForm.set('Facility_Reg_Sno', `${found.Facility_Reg_Sno}`);
-              let form = new Map();
-              form.set('User_Name', localStorage.getItem('User_Name')!);
-              form.set('SDetails', Object.fromEntries(studentForm));
-              this.facultiesService.addStudent(Object.fromEntries(form));
-            }
-          },
-        });
-    } else {
-      this.studentForm.markAllAsTouched();
-    }
-  }
-  get SDetails() {
-    return this.studentForm.get('SDetails') as FormArray;
+  resetForm(event: any) {
+    this.studentDetailsFormService.studentForm.reset();
   }
 }

@@ -1,9 +1,17 @@
-export interface SDetails {
+export interface FSDetails {
   Admission_No: string;
   Facility_Reg_Sno: string;
 }
 
-export interface AddStudent {
+export interface FRegisterParent {
   User_Name: string;
-  SDetails: SDetails[];
+  Email_Address: undefined | string | null;
+  Parent_Name: undefined | string | null;
+  Mobile_No: undefined | string | null;
+  SDetails: FSDetails[];
 }
+
+// export interface RegisterParent extends AddStudent{
+//   Email_Address:string;
+//   Parent_Name:strij
+// }

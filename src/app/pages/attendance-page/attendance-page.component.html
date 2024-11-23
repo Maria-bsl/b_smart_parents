@@ -1,0 +1,111 @@
+<ion-content>
+  <div
+    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
+  >
+    <div class="flex-none text-white py-7">
+      <mat-toolbar
+        class="flex flex-row items-center justify-between !bg-transparent w-full"
+      >
+        <div class="flex flex-row items-center">
+          <ion-buttons slot="start">
+            <ion-back-button
+              class="text-white"
+              defaultHref="/tabs/tab-1"
+            ></ion-back-button>
+          </ion-buttons>
+        </div>
+        <p
+          class="bg-white rounded mat-body-large p-1 text-[var(--sys-primary)] drop-shadow-sm"
+        >
+          2021 - 2022
+        </p>
+      </mat-toolbar>
+    </div>
+    <div
+      *ngIf="attendanceScore$ | async as attendanceScore; else notFoundTemplate"
+      class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
+    >
+      <div class="flex flex-row items-center w-full justify-between">
+        <button
+          (click)="prevScore($event, attendanceScore)"
+          [disabled]="currentIndex === 0"
+          mat-icon-button
+        >
+          <mat-icon svgIcon="chevron-left"></mat-icon>
+        </button>
+        <h2 class="mat-title-medium !font-semibold capitalize pt-2.5">
+          {{ "attendance.labels.attendanceRecord" | translate }}
+        </h2>
+        <button
+          (click)="nextScore($event, attendanceScore)"
+          [disabled]="currentIndex === attendanceScore.length - 1"
+          mat-icon-button
+        >
+          <mat-icon svgIcon="chevron-right"></mat-icon>
+        </button>
+      </div>
+      <ng-container>
+        <div class="carousel w-full">
+          <ng-container
+            *ngFor="
+              let attendanceScore of attendanceScore$ | async;
+              index as ind
+            "
+          >
+            <div [id]="'slide-' + ind" class="carousel-item relative w-full">
+              <div class="flex flex-col w-full">
+                <mat-calendar
+                  [minDate]="attendanceScore.StartDate"
+                  [maxDate]="attendanceScore.EndDate"
+                >
+                  <mat-calendar-header></mat-calendar-header>
+                </mat-calendar>
+                <div class="flex flex-col w-full space-y-2 px-5">
+                  <div
+                    class="flex flex-row items-center justify-between border-l-8 border-t border-b border-r rounded border-red-600 py-2 px-2"
+                  >
+                    <a class="mat-body-large">{{
+                      "attendance.labels.absent" | translate
+                    }}</a>
+                    <div
+                      class="w-8 h-8 bg-red-100 rounded-full grid place-items-center"
+                    >
+                      <a class="text-red-600 mat-body-small">{{
+                        attendanceScore.Absent_Days
+                      }}</a>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-row items-center justify-between border-l-8 border-t border-b border-r rounded border-green-600 py-2 px-2"
+                  >
+                    <a class="mat-body-large">{{
+                      "attendance.labels.present" | translate
+                    }}</a>
+                    <div
+                      class="w-8 h-8 bg-green-100 rounded-full grid place-items-center"
+                    >
+                      <a class="text-green-600 mat-body-small">{{
+                        attendanceScore.Present_Days
+                      }}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+    <ng-template #notFoundTemplate>
+      <span class="mat-body-large w-full text-center">{{
+        "attendance.labels.labels" | translate
+      }}</span>
+    </ng-template>
+  </div>
+  <img
+    class="w-full h-full z-0"
+    src="assets/components/test-frame-1.png"
+    alt=""
+    srcset=""
+  />
+</ion-content>

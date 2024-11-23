@@ -1,0 +1,95 @@
+// .loader {
+//   color: var(--sys-primary-fixed-dim);
+//   font-size: 80px;
+//   text-indent: -9999em;
+//   overflow: hidden;
+//   width: 1em;
+//   height: 1em;
+//   border-radius: 50%;
+//   position: relative;
+//   transform: translateZ(0);
+//   animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
+// }
+
+// @keyframes mltShdSpin {
+//   0% {
+//     box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+//       0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+//   }
+//   5%,
+//   95% {
+//     box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+//       0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+//   }
+//   10%,
+//   59% {
+//     box-shadow: 0 -0.83em 0 -0.4em, -0.087em -0.825em 0 -0.42em,
+//       -0.173em -0.812em 0 -0.44em, -0.256em -0.789em 0 -0.46em,
+//       -0.297em -0.775em 0 -0.477em;
+//   }
+//   20% {
+//     box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+//       -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em,
+//       -0.749em -0.34em 0 -0.477em;
+//   }
+//   38% {
+//     box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+//       -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em,
+//       -0.82em -0.09em 0 -0.477em;
+//   }
+//   100% {
+//     box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+//       0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+//   }
+// }
+
+// @keyframes round {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 35px;
+  aspect-ratio: 1;
+  --c1: linear-gradient(
+    90deg,
+    #0000 calc(100% / 3),
+    #046d8b 0 calc(2 * 100% / 3),
+    #0000 0
+  );
+  --c2: linear-gradient(
+    0deg,
+    #0000 calc(100% / 3),
+    #046d8b 0 calc(2 * 100% / 3),
+    #0000 0
+  );
+  background: var(--c1), var(--c2), var(--c1), var(--c2);
+  background-size: 300% 4px, 4px 300%;
+  background-repeat: no-repeat;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  0% {
+    background-position: 50% 0, 100% 100%, 0 100%, 0 0;
+  }
+  25% {
+    background-position: 0 0, 100% 50%, 0 100%, 0 0;
+  }
+  50% {
+    background-position: 0 0, 100% 0, 50% 100%, 0 0;
+  }
+  75% {
+    background-position: 0 0, 100% 0, 100% 100%, 0 50%;
+  }
+  75.01% {
+    background-position: 100% 0, 100% 0, 100% 100%, 0 50%;
+  }
+  100% {
+    background-position: 50% 0, 100% 0, 100% 100%, 0 100%;
+  }
+}

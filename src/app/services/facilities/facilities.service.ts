@@ -15,7 +15,7 @@ import { AppConfigService } from '../app-config/app-config.service';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AddStudent } from 'src/app/core/forms/f-add-student';
+import { FRegisterParent } from 'src/app/core/forms/f-add-student';
 import { UsersManagementService } from '../users-management/users-management.service';
 
 @Injectable({
@@ -86,7 +86,7 @@ export class FacilitiesService {
     // });
     this.facultiesList();
   }
-  addStudent(addStudentForm: AddStudent) {
+  addStudent(addStudentForm: FRegisterParent) {
     this.appConfigService.startLoading().then((loading) => {
       this.apiService
         .addStudent(addStudentForm)

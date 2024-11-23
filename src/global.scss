@@ -92,7 +92,8 @@ ion-button {
 }
 
 ion-content {
-  --background: var(--sys-surface);
+  //--background: var(--sys-surface) !important;
+  --background: #ffffff !important;
 }
 
 input[type="password"]::-ms-reveal {

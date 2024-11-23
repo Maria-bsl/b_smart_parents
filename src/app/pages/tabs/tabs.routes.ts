@@ -67,6 +67,20 @@ export const routes: Routes = [
               },
             ],
           },
+          {
+            path: 'fees',
+            loadComponent: () =>
+              import('../fees-page/fees-page.component').then(
+                (c) => c.FeesPageComponent
+              ),
+          },
+          {
+            path: 'attendance',
+            loadComponent: () =>
+              import('../attendance-page/attendance-page.component').then(
+                (c) => c.AttendancePageComponent
+              ),
+          },
         ],
       },
     ],

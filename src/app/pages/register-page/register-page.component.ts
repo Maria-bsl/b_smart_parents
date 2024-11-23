@@ -29,8 +29,8 @@ import {
   IonBackButton,
   IonButtons,
 } from '@ionic/angular/standalone';
-import { TranslateModule } from '@ngx-translate/core';
-import { map, Observable, of, startWith, switchMap } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { map, Observable, of, startWith, switchMap, zip } from 'rxjs';
 import { RegisterParentAccountInfoComponent } from 'src/app/components/templates/register-parent-account-info/register-parent-account-info.component';
 import { StudentDetailsFormComponent } from 'src/app/components/templates/student-details-form/student-details-form.component';
 import { AvailableMobileNumbersRegex } from 'src/app/core/enums/available-mobile-numbers';
@@ -40,6 +40,9 @@ import { FacilitiesService } from 'src/app/services/facilities/facilities.servic
 import { RegisterPageService } from 'src/app/services/pages/register-page-service/register-page.service';
 import { RegisterAccountInfoService } from 'src/app/services/register-account-info-service/register-account-info.service';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
+import { AppLauncher } from '@capacitor/app-launcher';
+import Swal from 'sweetalert2';
+import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 
 @Component({
   selector: 'app-register-page',
@@ -67,45 +70,14 @@ import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.
 })
 export class RegisterPageComponent implements OnInit, AfterViewInit {
   isLinear: boolean = false;
-  constructor(public registerPageService: RegisterPageService) {}
+  constructor(
+    public registerPageService: RegisterPageService,
+    private appConfig: AppConfigService,
+    private tr: TranslateService
+  ) {}
   ngAfterViewInit(): void {}
   ngOnInit() {}
-  // submitAddStudentForm(event: any) {
-  //   if (this.studentForm.valid) {
-  //     let sDetail = this.SDetails.controls.at(0) as FormGroup;
-  //     // this.filteredOptions$
-  //     //   .pipe(this._unsubscriber.takeUntilDestroy)
-  //     //   .subscribe({
-  //     //     next: (faculties) => {
-  //     //       let facilityName = sDetail?.get('SearchFacility')?.value;
-  //     //       let found = faculties.find((e) => e.Facility_Name === facilityName);
-  //     //       let admissionNo = sDetail?.get('Admission_No')?.value;
-  //     //       if (found) {
-  //     //         let studentForm = new Map();
-  //     //         studentForm.set('Admission_No', `${admissionNo}`);
-  //     //         studentForm.set('Facility_Reg_Sno', `${found.Facility_Reg_Sno}`);
-  //     //         let form = new Map();
-  //     //         form.set('User_Name', localStorage.getItem('User_Name')!);
-  //     //         form.set('SDetails', Object.fromEntries(studentForm));
-  //     //         console.log(Object.fromEntries(form));
-  //     //         //this.facultiesService.addStudent(Object.fromEntries(form));
-  //     //       }
-  //     //     },
-  //     //   });
-  //   } else {
-  //     this.studentForm.markAllAsTouched();
-  //   }
-  // }
-  submitRegisterForm(event: any) {
-    if (
-      this.registerPageService.registerParentAccountInfoService.parentForm
-        .valid &&
-      this.registerPageService.studentDetailsService.studentForm.valid
-    ) {
-    } else {
-      this.registerPageService.validateRegistrationForm();
-      this.registerPageService.registerParentAccountInfoService.parentForm.markAllAsTouched();
-      this.registerPageService.studentDetailsService.studentForm.markAllAsTouched();
-    }
+  async submitRegisterForm(event: any) {
+    this.registerPageService.submitForm();
   }
 }
