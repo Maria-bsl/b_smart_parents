@@ -138,6 +138,7 @@
       "notificationsText": "Notification(s)",
       "securityText": "Change password",
       "getSupportText": "Get Support",
+      "switchAccount": "Switch Account",
       "logout": "Log out"
     }
   },

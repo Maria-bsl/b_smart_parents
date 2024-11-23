@@ -10,12 +10,16 @@
   background-color: var(--sys-inverse-secondary) !important;
 }
 
-.icon-primary-color mat-icon {
-  color: var(--sys-primary) !important;
-}
+// .icon-primary-color mat-icon {
+//   color: var(--sys-primary) !important;
+// }
 
-.fees-icon-primary-color mat-icon {
-  color: var(--sys-on-secondary-container) !important;
+// .fees-icon-primary-color mat-icon {
+//   color: var(--sys-on-secondary-container) !important;
+// }
+
+.module-grid-tile mat-icon {
+  color: var(--md-sys-color-on-primary);
 }
 
 .module-grid-tile {
@@ -24,7 +28,7 @@
 }
 
 .module-grid-tile mat-icon {
-  color: var(--sys-secondary) !important;
+  color: var(--md-sys-color-on-primary) !important;
 }
 
 .example-spacer {

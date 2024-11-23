@@ -74,6 +74,7 @@
   --md-sys-color-surface-container-highest: #37333a;
   --md-sys-color-on-surface: #e7e0e8;
   --md-sys-color-surface-variant: #4a454e;
+  --sys-surface-variant: transparent;
   --md-sys-color-on-surface-variant: #ccc4cf;
   --md-sys-color-inverse-surface: #e7e0e8;
   --md-sys-color-inverse-on-surface: #322f35;

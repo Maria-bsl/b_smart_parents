@@ -10,3 +10,7 @@
   border: 1px solid var(--sys-surface-dim) !important;
   border-radius: 20px 20px 20px 20px !important;
 }
+
+:host ::ng-deep .mat-mdc-tab-label-container {
+  overflow-x: auto !important;
+}

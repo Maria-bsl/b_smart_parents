@@ -1,14 +1,14 @@
-<ion-content>
+<!-- <ion-content>
   <div
     id="bg-cover"
     class="absolute bg-[#015aa8] top-0 left-0 right-0 bottom-0 w-full h-full z-0"
   >
-    <!-- <img
+    <img
       class="object-fill w-full h-full z-0"
       src="assets/components/sign_in_bg.png"
       alt=""
       srcset=""
-    /> -->
+    />
   </div>
   <div class="absolute top-16 left-0 right-0 w-full">
     <img
@@ -68,4 +68,68 @@
       </div>
     </div>
   </div>
+</ion-content> -->
+
+<ion-content>
+  <div
+    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
+  >
+    <div class="flex-none text-white py-7">
+      <mat-toolbar
+        class="flex flex-row items-center justify-between !bg-transparent w-full"
+      >
+        <div class="flex flex-row items-center">
+          <ion-buttons slot="start">
+            <ion-back-button
+              class="text-white"
+              defaultHref="/tabs/tab-1"
+            ></ion-back-button>
+          </ion-buttons>
+          <ion-text class="!text-white">{{
+            "getSupportPage.labels.getSupportLabel" | translate
+          }}</ion-text>
+        </div>
+      </mat-toolbar>
+    </div>
+    <div
+      class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
+    >
+      <div
+        class="absolute top-0 bottom-0 left-0 right-0 flex flex-col justify-center items-center space-y-2"
+      >
+        <img src="assets/components/support_.png" alt="" srcset="" />
+        <ion-text
+          class="text-center w-full placeholer-text px-8 mat-body-medium"
+        >
+          {{ "getSupportPage.labels.supportText" | translate }}
+        </ion-text>
+      </div>
+      <div
+        class="absolute left-0 right-0 flex flex-col justify-center items-center"
+      >
+        <ion-text class="text-center w-full font-semibold">
+          {{ "getSupportPage.labels.callUs" | translate }} -
+          <span
+            class="font-normal"
+            *ngIf="parentDetail$ | async as parentDetail"
+            >{{ parentDetail.Mobile_No }}</span
+          >
+        </ion-text>
+        <ion-text class="text-center w-full font-semibold">
+          {{ "getSupportPage.labels.mailUs" | translate }} -
+          <span
+            class="font-normal"
+            *ngIf="parentDetail$ | async as parentDetail"
+            >{{ parentDetail.Email_Address }}</span
+          >
+        </ion-text>
+      </div>
+    </div>
+  </div>
+  <img
+    class="w-full h-full z-0"
+    src="assets/components/test-frame-1.png"
+    alt=""
+    srcset=""
+  />
 </ion-content>

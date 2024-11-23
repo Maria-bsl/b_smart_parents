@@ -1,206 +1,3 @@
-<!-- <ion-content class="relative">
-  <div
-    id="bg-cover"
-    class="absolute bg-[#015aa8] top-0 left-0 right-0 bottom-0 w-full h-full z-0"
-  >
-    <img
-      class="hidden object-fill w-full h-full z-0"
-      src="assets/components/sign_in_bg.png"
-      alt=""
-      srcset=""
-    />
-  </div>
-  <div class="absolute top-16 left-0 right-0 w-full">
-    <img
-      class="object-fill w-full h-full z-0"
-      src="assets/components/star_pattern.png"
-      alt=""
-      srcset=""
-    />
-  </div>
-  <div
-    id="container"
-    class="absolute top-0 bottom-0 left-0 right-0 w-full h-full pt-4"
-  >
-    <mat-toolbar
-      class="flex flex-row items-center !bg-transparent !h-32 !w-full !justify-between"
-    >
-      <div class="flex flex-col">
-        <ion-title class="!text-white text-2xl">{{
-          dashboardService.selectedStudent.SFullName
-        }}</ion-title>
-        <ion-title class="!text-gray-300 mat-title-small !font-sora">
-          {{ dashboardService.selectedStudent.Class_Name }}
-        </ion-title>
-        <mat-chip class="w-fit ml-5 academic-year-chip">
-          {{ dashboardService.selectedStudent.Acad_Year }}
-        </mat-chip>
-      </div>
-      <button
-        mat-icon-button
-        class="icon-primary-color"
-        aria-label="Example icon button with a vertical three dot icon"
-      >
-        <mat-icon class="text-white" matPrefix svgIcon="person-fill"></mat-icon>
-      </button>
-    </mat-toolbar>
-    <div class="relative w-full h-fit px-8 z-10 flex flex-col space-y-4 pb-4">
-      <div
-        class="absolute bg-white mt-24 rounded-tl-[3.5rem] rounded-tr-[3.5rem] left-0 right-0 bottom-0 top-0"
-      ></div>
-      <mat-grid-list cols="2" gutterSize="8px" rowHeight="200px">
-        <mat-grid-tile
-          class="border-2 border-[#015aa8] rounded bg-white relative"
-        >
-          <div class="flex flex-col w-full h-full p-4 !space-y-4">
-            <button class="icon-primary-color !w-20 !h-20" mat-icon-button>
-              <mat-icon
-                matPrefix
-                svgIcon="student-person-svgrepo-com"
-                class="icon-button-outter-color !scale-x-150 !scale-y-150"
-              ></mat-icon>
-            </button>
-            <ion-text class="mat-headline-medium !font-semibold">
-              @if (dashboardService.overallAttendance$) {
-              {{ (dashboardService.overallAttendance$ | async)?.Present }}
-              }
-            </ion-text>
-            <ion-text class="mat-body-medium !font-semibold placeholer-text">
-              {{ "dashboardPage.labels.attendanceText" | translate }}
-            </ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          class="border-2 border-[#015aa8] rounded bg-white relative"
-        >
-          <div class="flex flex-col w-full h-full p-4 !space-y-2">
-            <button class="fees-icon-primary-color !w-20 !h-20" mat-icon-button>
-              <mat-icon
-                matPrefix
-                svgIcon="black-and-white-credit-cards-svgrepo-com"
-                class="fees-icon-button-outter-color !scale-x-150 !scale-y-150"
-              ></mat-icon>
-            </button>
-            <ion-text class="mat-title-large !font-semibold">
-              @if (dashboardService.pendingStudentInvoices$) {
-              {{
-                (dashboardService.pendingStudentInvoices$ | async)!
-                  | accumulateArrayValue : "Pending_Amount"
-                  | currency : "TZS"
-              }}
-              }
-            </ion-text>
-            <ion-text class="mat-body-medium !font-semibold placeholer-text">{{
-              "dashboardPage.labels.feesText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-      </mat-grid-list>
-      <mat-grid-list cols="2" gutterSize="8px" rowHeight="100px">
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.assignmentsText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/fees'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon
-              matPrefix
-              svgIcon="ic_holiday_blue"
-              class="scale-150"
-            ></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.feesText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/time-table'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="calendar-date-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.timeTableText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/results'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon
-              matPrefix
-              svgIcon="file-earmark-bar-graph-fill"
-            ></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.resultsText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/attendance'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="calendar-check-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.attendanceText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/change-password'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="lock-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.securityText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          [routerLink]="'/tabs/tab-1/get-support'"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="headset"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.getSupportText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          (click)="logoutClicked($event)"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="box-arrow-right"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.logout" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-      </mat-grid-list>
-    </div>
-  </div>
-</ion-content> -->
-
 <ion-content>
   <div
     class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
@@ -290,19 +87,7 @@
           </mat-grid-tile>
         </mat-grid-list>
       </div>
-      <!-- <p class="!mt-28">Helo world</p> -->
-      <!-- <div class="flex flex-col w-full">
-
-       </div> -->
       <mat-grid-list class="!mt-28" cols="2" gutterSize="8px" rowHeight="100px">
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.assignmentsText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
         <mat-grid-tile
           [routerLink]="'/tabs/tab-1/fees'"
           matRipple
@@ -311,7 +96,7 @@
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon
               matPrefix
-              svgIcon="ic_holiday_blue"
+              svgIcon="ic_holiday_purple"
               class="scale-150"
             ></mat-icon>
             <ion-text class="mat-body-medium">{{
@@ -370,6 +155,14 @@
             }}</ion-text>
           </div>
         </mat-grid-tile>
+        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.switchAccount" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
         <mat-grid-tile
           [routerLink]="'/tabs/tab-1/get-support'"
           matRipple
@@ -388,7 +181,7 @@
           class="module-grid-tile rounded-lg"
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="box-arrow-right"></mat-icon>
+            <mat-icon matPrefix svgIcon="door-open-fill"></mat-icon>
             <ion-text class="mat-body-medium">{{
               "dashboardPage.labels.logout" | translate
             }}</ion-text>

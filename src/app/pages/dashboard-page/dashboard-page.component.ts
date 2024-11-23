@@ -82,11 +82,12 @@ export class DashboardPageComponent implements OnInit {
         'lock-fill',
         'headset',
         'box-arrow-right',
+        'door-open-fill',
       ],
       `/assets/bootstrap-icons`
     );
     this.appConfig.addIcons(
-      ['ic_holiday', 'ic_holiday_blue', 'fees-vector'],
+      ['ic_holiday', 'ic_holiday_blue', 'fees-vector', 'ic_holiday_purple'],
       `/assets/figma`
     );
   }
