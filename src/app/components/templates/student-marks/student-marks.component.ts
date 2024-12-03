@@ -11,7 +11,7 @@ import { IonText, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { FStudentMarksForm } from 'src/app/core/forms/f-student-marks-form';
-import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
+import { finalize, firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
   IStudentMarks,
   IStudentMarksDetail,
@@ -28,6 +28,10 @@ import { addIcons } from 'ionicons';
 import { downloadOutline } from 'ionicons/icons';
 import { JspdfUtilsService } from 'src/app/services/jsdpdf-utils/jspdf-utils.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import jsPDF from 'jspdf';
+import { LoadingService } from 'src/app/services/loading-service/loading.service';
+import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
+import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
 
 @Component({
   selector: 'app-student-marks',
@@ -47,7 +51,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   ],
 })
 export class StudentMarksComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatCard, { read: ElementRef }) resultsList!: ElementRef;
+  //@ViewChild(MatCard, { read: ElementRef }) resultsList2!: ElementRef;
+  @ViewChild('resultsList') resultsList!: ElementRef<HTMLDivElement>;
   selectedStudent: GetSDetailStudents = JSON.parse(
     localStorage.getItem('selectedStudent')!
   );
@@ -60,7 +65,9 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
     private activatedRoute: ActivatedRoute,
     private unsubscribe: UnsubscriberService,
     private jsPdfService: JspdfUtilsService,
-    private tr: TranslateService
+    private apiService: ApiConfigService,
+    private tr: TranslateService,
+    private loadingService: LoadingService
   ) {
     addIcons({ downloadOutline });
   }
@@ -83,6 +90,22 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
     };
     return form;
   }
+  private writeAndDownloadReport(
+    studentName: string,
+    labels: string[],
+    element: any
+  ) {
+    this.loadingService.startLoading().then(async (loading) => {
+      let details = await firstValueFrom(this.studentMarks$);
+      let doc = new jsPDF(
+        element.clientWidth > element.clientHeight ? 'l' : 'p',
+        'mm',
+        [element.clientWidth, element.clientHeight]
+      );
+      this.jsPdfService.exportJsPdfToPdf(doc, element, 'result');
+      this.loadingService.dismiss();
+    });
+  }
   ngOnInit() {
     this.readExamTypeFromActivatedRoute();
   }
@@ -95,7 +118,7 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
         next: (res) => {
           const studentName = this.selectedStudent.SFullName;
           const labels = [res.studentName, res.finalGrade, res.overall];
-          this.studentsService.downloadStudentMarksDetailsReport(
+          this.writeAndDownloadReport(
             studentName,
             labels,
             this.resultsList.nativeElement

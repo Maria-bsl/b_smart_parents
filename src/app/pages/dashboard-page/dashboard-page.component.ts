@@ -23,14 +23,18 @@ import { MatRippleModule } from '@angular/material/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { zip } from 'rxjs';
+import { finalize, Observable, zip } from 'rxjs';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { UsersManagementService } from 'src/app/services/users-management/users-management.service';
 import { DashboardModule } from 'src/app/core/types/dashboard-module';
 import { DashboardService } from 'src/app/services/pages/dashboard-service/dashboard.service';
 import { AccumulateStudentInvoicePipe } from 'src/app/core/pipes/accumulate-student-invoice/accumulate-student-invoice.pipe';
+import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
+import { LoadingService } from 'src/app/services/loading-service/loading.service';
+import { OverallAttendance } from 'src/app/core/types/attendance';
+import { StudentPendingInvoice } from 'src/app/core/types/student-invoices';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -56,8 +60,15 @@ import { AccumulateStudentInvoicePipe } from 'src/app/core/pipes/accumulate-stud
   ],
 })
 export class DashboardPageComponent implements OnInit {
+  overallAttendance$: Observable<OverallAttendance[]> =
+    this.dashboardService.overallAttendance$.asObservable();
+  pendingStudentInvoices$: Observable<StudentPendingInvoice[]> =
+    this.dashboardService.pendingStudentInvoices$.asObservable();
   constructor(
     private appConfig: AppConfigService,
+    private router: Router,
+    private apiService: ApiConfigService,
+    private loadingService: LoadingService,
     public dashboardService: DashboardService
   ) {
     this.registerIcons();
@@ -93,6 +104,12 @@ export class DashboardPageComponent implements OnInit {
   }
   ngOnInit() {
     this.dashboardService.initDashboard();
+  }
+  ionViewDidLoad() {
+    this.dashboardService.initDashboard();
+  }
+  navigateToHomeScreen() {
+    this.router.navigateByUrl('/home', { replaceUrl: true });
   }
   logoutClicked(event: any) {
     this.dashboardService.logUserOut();

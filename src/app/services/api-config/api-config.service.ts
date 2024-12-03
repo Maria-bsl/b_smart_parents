@@ -17,8 +17,14 @@ import {
 } from 'rxjs';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
 import { isPlatform } from '@ionic/angular/standalone';
-import { FRegisterParent } from 'src/app/core/forms/f-add-student';
-import { FTimeTableForm } from 'src/app/core/forms/f-time-table-form';
+import {
+  FDeleteStudent,
+  FRegisterParent,
+} from 'src/app/core/forms/f-add-student';
+import {
+  FBookForm,
+  FTimeTableForm,
+} from 'src/app/core/forms/f-time-table-form';
 import { FExamType } from 'src/app/core/forms/f-exam-type';
 import { FStudentMarksForm } from 'src/app/core/forms/f-student-marks-form';
 import { environment } from 'src/environments/environment';
@@ -30,16 +36,19 @@ import {
   StudentPendingInvoice,
 } from 'src/app/core/types/student-invoices';
 import { AttendanceScore } from 'src/app/core/types/attendance';
-
-//const REQUEST_TOKEN_ENDPOINT = 'http://183.83.33.156:92/Mobile';
+import { VehicleDetail } from 'src/app/core/interfaces/transports';
+import { IPackage } from 'src/app/core/interfaces/packages';
+import {
+  GetSDetails,
+  GetSDetailsErrorStatus,
+} from 'src/app/core/interfaces/GetSDetails';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiConfigService {
-  //private baseUrl = environment.nmbTokenBaseUrl; //'http://183.83.33.156:92/Mobile';
-  private baseUrl = 'http://183.83.33.156:85/api'; //'http://183.83.33.156:92/Mobile';
-  signInFinished = new EventEmitter<any>();
+  //private baseUrl = environment.nmbTokenBaseUrl;
+  private baseUrl = 'http://183.83.33.156:85/api';
   constructor(
     private http: HttpClient,
     private _unsubscribe: UnsubscriberService
@@ -59,15 +68,42 @@ export class ApiConfigService {
     }
   }
   private performPost<T>(url: string, body: T, headers: any) {
-    return this.http.post(url, body, { headers: headers }).pipe(
-      this._unsubscribe.takeUntilDestroy,
-      retry(3),
-      catchError((err: HttpErrorResponse) => {
-        return this.handleError(err);
+    // return this.http.post(url, body, { headers: headers }).pipe(
+    //   this._unsubscribe.takeUntilDestroy,
+    //   retry(3),
+    //   catchError((err: HttpErrorResponse) => {
+    //     return this.handleError(err);
+    //   })
+    // ) as Observable<any>;
+    AbortSignal.timeout ??= function timeout(ms) {
+      const ctrl = new AbortController();
+      setTimeout(() => ctrl.abort(), ms);
+      return ctrl.signal;
+    };
+    let promise = fetch(url, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(30000),
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        return res.json();
       })
-    ) as Observable<any>;
+      .catch((err) => {
+        throw err;
+      });
+    return from(promise).pipe(
+      retry(3),
+      catchError((err) => {
+        throw err;
+      })
+    );
   }
-  signIn(body: FLoginForm) {
+  signIn(
+    body: FLoginForm
+  ): Observable<GetSDetails[] | GetSDetailsErrorStatus[]> {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetSDetails`,
       body,
@@ -92,6 +128,15 @@ export class ApiConfigService {
     return this.performPost(
       `
       ${this.baseUrl}/SchoolDetails/GetAttendance
+      `,
+      body,
+      {}
+    );
+  }
+  getStudentPendingInvoices(body: StudentDetailsForm) {
+    return this.performPost(
+      `
+      ${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices
       `,
       body,
       {}
@@ -132,17 +177,6 @@ export class ApiConfigService {
       {}
     );
   }
-  getStudentPendingInvoices(
-    body: StudentDetailsForm
-  ): Observable<StudentPendingInvoice[]> {
-    return this.performPost(
-      `
-      ${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices
-      `,
-      body,
-      {}
-    );
-  }
   getStudentPaidInvoices(body: StudentDetailsForm) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetStudentPaidInvoices`,
@@ -164,7 +198,7 @@ export class ApiConfigService {
       {}
     );
   }
-  getAttendanceScore(body: StudentDetailsForm): Observable<AttendanceScore[]> {
+  getAttendanceScore(body: StudentDetailsForm) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetStudentAttendance`,
       body,
@@ -174,6 +208,44 @@ export class ApiConfigService {
   registerParent(body: FRegisterParent) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/ParentReg`,
+      body,
+      {}
+    );
+  }
+  deleteStudent(body: FDeleteStudent) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/DeleteStudent`,
+      body,
+      {}
+    );
+  }
+  getRoute(body: StudentDetailsForm): Observable<VehicleDetail[]> {
+    return this.performPost(`${this.baseUrl}/SchoolDetails/GetRoute`, body, {});
+  }
+  getBooksReturned(body: FBookForm) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetR_Books`,
+      body,
+      {}
+    );
+  }
+  getBooksBorrowed(body: FBookForm) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetB_Books`,
+      body,
+      {}
+    );
+  }
+  getPackagePriceList(body: {}): Observable<IPackage[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetPackagePrice`,
+      body,
+      {}
+    );
+  }
+  getPackageHistoryList(body: { User_Name: string }): Observable<IPackage[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetPackageHistory`,
       body,
       {}
     );

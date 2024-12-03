@@ -1,0 +1,122 @@
+<!-- <ion-content class="flex flex-col w-full !rounded-none relative">
+  <div class="flex flex-col w-full relative">
+    <ion-title class="w-full text-center">
+      {{ "subscriptionPage.labels.payWithMPesaText" | translate }}
+    </ion-title>
+    <button mat-icon-button class="absolute right-0 top-0 w-full">
+      <mat-icon matPrefix svgIcon="x-lg"></mat-icon>
+    </button>
+  </div>
+</ion-content> -->
+
+<!-- <mat-dialog-container>
+  <button mat-icon-button class="absolute right-0 top-0 w-full">
+    <mat-icon matPrefix svgIcon="x-lg"></mat-icon>
+  </button>
+  <mat-dialog-content></mat-dialog-content>
+</mat-dialog-container> -->
+
+<div class="w-full h-full relative">
+  <button
+    mat-icon-button
+    mat-dialog-close
+    class="absolute right-1 top-1 float-right !bg-[var(--md-sys-color-neutral-variant)]"
+  >
+    <mat-icon class="text-black" matPrefix svgIcon="x-lg"></mat-icon>
+  </button>
+  <mat-dialog-content class="flex flex-col w-full relative">
+    <ion-title class="w-full text-center">
+      {{ "subscriptionPage.labels.payWithMPesaText" | translate }}
+    </ion-title>
+    <form
+      *ngIf="!mpesaService.isLoading(); else processingTransaction"
+      [formGroup]="payFormGroup"
+      class="my-2"
+    >
+      <div class="flex flex-col w-full">
+        <ion-text class="mat-body-small !font-semibold placeholer-text">
+          {{ "registerPage.registerForm.labels.mobileNumberText" | translate }}
+        </ion-text>
+        <mat-form-field class="example-full-width">
+          <span matTextPrefix>+255 &nbsp;</span>
+          <input
+            #phone
+            type="tel"
+            [formControl]="input_CustomerMSISDN"
+            matInput
+            placeholder="666-999-666"
+          />
+          <mat-error>
+            @if (input_CustomerMSISDN | hasFormControlError: 'required') {
+            {{
+              "subscriptionPage.subscribeForm.errors.missingPhoneNumber"
+                | translate
+            }}
+            } @else if (input_CustomerMSISDN | hasFormControlError: 'pattern') {
+            {{
+              "subscriptionPage.subscribeForm.errors.invalidPhoneNumber"
+                | translate
+            }}
+            }
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="flex flex-col w-full">
+        <ion-text class="mat-body-small !font-semibold placeholer-text">
+          {{ "subscriptionPage.subscribeForm.labels.amount" | translate }}
+        </ion-text>
+        <mat-form-field class="example-full-width">
+          <input
+            [value]="
+              data.package?.Package_Amount
+                ? (data.package?.Package_Amount | currency : 'TZS')
+                : (data.amount | currency : 'TZS')
+            "
+            type="text"
+            matInput
+            placeholder="TZS"
+            [readonly]="true"
+          />
+        </mat-form-field>
+      </div>
+      <div
+        class="w-full bg-[var(--md-sys-color-on-primary-container)] p-1 rounded"
+      >
+        <h6 class="!w-full !text-center mat-body-small">
+          {{
+            "subscriptionPage.subscribeForm.labels.paymentRequest" | translate
+          }}
+        </h6>
+      </div>
+      <button
+        (click)="submitPayWithMpesaForm($event)"
+        type="button"
+        class="w-full my-4"
+        mat-flat-button
+      >
+        {{ "subscriptionPage.subscribeForm.labels.pay" | translate }}
+        {{
+          data.package?.Package_Amount
+            ? (data.package?.Package_Amount | currency : "TZS")
+            : (data.amount | currency : "TZS")
+        }}
+      </button>
+    </form>
+    <ng-template #processingTransaction>
+      <div class="w-full h-full grid place-items-center py-4">
+        <span class="loader"></span>
+        <!-- <button
+          class="!bg-red-500"
+          type="ngSubmit"
+          class="w-full my-4"
+          mat-flat-button
+        >
+          {{
+            "subscriptionPage.subscribeForm.labels.cancelTransaction"
+              | translate
+          }}
+        </button> -->
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+</div>

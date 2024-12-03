@@ -9,31 +9,7 @@
 @tailwind utilities;
 
 @include mat.core();
-
-// @import url("https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Italianno&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parkinsans:wght@300..800&family=Sora:wght@100..800&display=swap");
-
-// @layer base {
-//   @font-face {
-//     font-family: "Myriad-Pro-Light";
-//     src: url("../assets/fonts/Myriad_Pro/Myriad-Pro-Light.otf");
-//   }
-
-//   @font-face {
-//     font-family: "Myriad-Pro-Regular";
-//     src: url("../assets/fonts/Myriad_Pro/Myriad-Pro-Regular.ttf");
-//   }
-
-//   @font-face {
-//     font-family: "Myriad-Pro-Bold";
-//     src: url("../assets/fonts/Myriad_Pro/Myriad-Pro-Bold.ttf");
-//   }
-
-//   @font-face {
-//     font-family: "Myriad-Pro-Black";
-//     src: url("../assets/fonts/Myriad_Pro/Myriad-Pro-Black.otf");
-//   }
-// }
 
 $light-theme: mat.define-theme(
   (
@@ -125,5 +101,9 @@ $light-theme: mat.define-theme(
   @include mat.system-level-colors($light-theme); // 👈 Added
   @include mat.system-level-typography($light-theme); // 👈 Added
   @include mat.form-field-density(-3);
+  //@include mat.tabs-density(-4);
+}
+
+.custom-tab-density {
   @include mat.tabs-density(-4);
 }

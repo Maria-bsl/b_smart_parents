@@ -18,6 +18,7 @@ import { FRegisterParent } from 'src/app/core/forms/f-add-student';
 import { toast } from 'ngx-sonner';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { LoadingService } from '../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,17 +46,18 @@ export class StudentDetailsFormService {
     private appConfig: AppConfigService,
     private apiService: ApiConfigService,
     private tr: TranslateService,
+    private loadingService: LoadingService,
     private router: Router
   ) {
     this.requestFacultiesList();
   }
   private requestFacultiesList() {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .getFacilities({})
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -86,12 +88,12 @@ export class StudentDetailsFormService {
     };
   }
   private requestAddStudent(body: FRegisterParent) {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .addStudent(body)
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results: any) => {

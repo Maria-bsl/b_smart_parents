@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { FRegisterParent } from 'src/app/core/forms/f-add-student';
 import { UsersManagementService } from '../users-management/users-management.service';
+import { LoadingService } from '../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,8 @@ export class FacilitiesService {
     private appConfigService: AppConfigService,
     private _unsubscriber: UnsubscriberService,
     private router: Router,
-    private tr: TranslateService
+    private tr: TranslateService,
+    private loadingService: LoadingService
   ) {}
   private displayFailedToFetchFaculties() {
     let failedMessageObs = 'defaults.failed';
@@ -48,12 +50,12 @@ export class FacilitiesService {
     );
   }
   private facultiesList() {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .getFacilities({})
         .pipe(
           this._unsubscriber.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -87,12 +89,12 @@ export class FacilitiesService {
     this.facultiesList();
   }
   addStudent(addStudentForm: FRegisterParent) {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .addStudent(addStudentForm)
         .pipe(
           this._unsubscriber.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {

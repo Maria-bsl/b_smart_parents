@@ -10,6 +10,7 @@ import {
   StudentPaidInvoice,
   StudentPendingInvoice,
 } from 'src/app/core/types/student-invoices';
+import { LoadingService } from '../../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +24,8 @@ export class FeesPageService {
   );
   constructor(
     private apiService: ApiConfigService,
-    private appConfig: AppConfigService,
-    private unsubscribe: UnsubscriberService
+    private unsubscribe: UnsubscriberService,
+    private loadingService: LoadingService
   ) {}
   initFeesPage() {
     const body: StudentDetailsForm = {
@@ -33,7 +34,7 @@ export class FeesPageService {
       From_Date: undefined,
       To_Date: undefined,
     };
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       let invoicesObs = this.apiService.getStudentInvoices(body);
       let pendingObs = this.apiService.getStudentPendingInvoices(body);
       let paidObs = this.apiService.getStudentPaidInvoices(body);
@@ -41,7 +42,7 @@ export class FeesPageService {
       merged
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results) => {

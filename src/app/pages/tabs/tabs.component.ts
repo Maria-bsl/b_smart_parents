@@ -15,6 +15,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { home, people, scan, busOutline, cubeOutline } from 'ionicons/icons';
+import { IsVisibleNavbarPipe } from 'src/app/core/pipes/is-visible-navbar/is-visible-navbar.pipe';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 
 @Component({
@@ -23,19 +24,20 @@ import { AppConfigService } from 'src/app/services/app-config/app-config.service
   styleUrls: ['./tabs.component.scss'],
   standalone: true,
   imports: [
-    IonTabs,
-    IonTabBar,
-    IonTabButton,
-    IonIcon,
     RouterLink,
     RouterLinkActive,
     IonRouterOutlet,
     IonContent,
+    IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonLabel,
     TranslateModule,
-    RouterOutlet,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    IsVisibleNavbarPipe,
   ],
 })
 export class TabsComponent implements OnInit {

@@ -6,6 +6,8 @@ import {
   IonButton,
   IonIcon,
   LoadingController,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/angular/standalone';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -26,6 +28,7 @@ import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 import { UsersManagementService } from 'src/app/services/users-management/users-management.service';
 import { RouterLink } from '@angular/router';
+import * as crypto from 'crypto';
 
 @Component({
   selector: 'app-login-page',
@@ -33,6 +36,8 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./login-page.component.scss'],
   standalone: true,
   imports: [
+    IonBackButton,
+    IonButtons,
     IonIcon,
     CommonModule,
     TranslateModule,

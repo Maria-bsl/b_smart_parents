@@ -11,6 +11,13 @@ export interface FRegisterParent {
   SDetails: FSDetails[];
 }
 
+export interface FDeleteStudent {
+  Facility_Reg_Sno: string | number;
+  User_Name: string;
+  Admission_No: string | number;
+  Reason_Del: string;
+}
+
 // export interface RegisterParent extends AddStudent{
 //   Email_Address:string;
 //   Parent_Name:strij

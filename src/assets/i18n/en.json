@@ -7,11 +7,15 @@
     "ok": "Ok",
     "yes": "Yes",
     "no": "No",
+    "success": "Success",
     "labels": {
       "from": "From",
       "to": "To",
       "download": "Download",
-      "all": "All"
+      "all": "All",
+      "home": "Home",
+      "transport": "Transport",
+      "package": "Package"
     },
     "dialogs": {
       "sureLogoutText": "Are you sure you want to log out?"
@@ -30,7 +34,7 @@
     "registerForm": {
       "labels": {
         "fullNameText": "Full name",
-        "mobileNumberText": "Mobile number",
+        "mobileNumberText": "Phone number",
         "usernameText": "Username",
         "emailText": "Email Address"
       },
@@ -95,7 +99,16 @@
   "homePage": {
     "labels": {
       "welcomeBackText": "Welcome back",
-      "students": "Student(s)"
+      "students": "Student(s)",
+      "deleted": "Student deleted successfully!",
+      "deleteStudent": "Delete student"
+    },
+    "warnings": {
+      "cantBeUndone": "This action can't be undone."
+    },
+    "errors": {
+      "failedToDeleteStudent": "Failed to delete student.",
+      "failedToRetrieveStudent": "Failed to retrieve student."
     }
   },
   "addStudentPage": {
@@ -139,6 +152,7 @@
       "securityText": "Change password",
       "getSupportText": "Get Support",
       "switchAccount": "Switch Account",
+      "library": "Library",
       "logout": "Log out"
     }
   },
@@ -234,6 +248,77 @@
       "present": "Present",
       "notAvailable": "Not available",
       "attendanceRecord": "Attendance record"
+    }
+  },
+  "mapsPage": {
+    "labels": {
+      "yourLocationText": "Your location",
+      "routeDetails": "Route Details",
+      "routeName": "Route name",
+      "dropOffTime": "Drop-Off Time",
+      "pickUpTime": "Pick-Up Time",
+      "landmarkArea": "Landmark area",
+      "vehicleRegistrationNo": "Vehicle registration No.",
+      "driverMobile": "Driver Mobile",
+      "attendantMobile": "Attendant Mobile",
+      "callDriver": "Call driver",
+      "callAttendant": "Call attendant"
+    }
+  },
+  "libraryPage": {
+    "labels": {
+      "library": "Library",
+      "booksReturned": "Books returned",
+      "booksBorrowed": "Books borrowed",
+      "leftInStock": "book(s) left in stock."
+    },
+    "errors": {
+      "noBooksAvailable": "No books available."
+    }
+  },
+  "latestSubscriptionsPage": {
+    "labels": {
+      "subscriptionPlans": "Subscription Plans",
+      "current": "Current",
+      "renew": "Renew",
+      "availablePlans": "Available plans",
+      "days": "Days",
+      "packageHistory": "Package History"
+    }
+  },
+  "subscriptionPage": {
+    "labels": {
+      "subscribe": "Subscribe",
+      "howWouldYouLikeToPayText": "How would you like to pay?",
+      "payWithMPesaText": "Pay with M-PESA",
+      "payWithCard": "Pay with card",
+      "subscription": "Subscription",
+      "transactionCompleted": "Transaction completed successfully!"
+    },
+    "subscribeForm": {
+      "labels": {
+        "amount": "Amount",
+        "paymentRequest": "You will receive a payment request. Please, ensure your phone is on, your sim card active. Enter your PIN to complete.",
+        "pay": "Pay",
+        "cancelTransaction": "Cancel transaction"
+      },
+      "errors": {
+        "missingPhoneNumber": "Please, specify.",
+        "invalidPhoneNumber": "Invalid phone number."
+      }
+    },
+    "errors": {
+      "failedTransaction": "Transaction failed",
+      "failedToOpenPaymentMethod": "Failed to open payment method.",
+      "transactionCancelled": "Your transaction has been cancelled.",
+      "transactionFailedCheckPin": "Sorry, your transaction failed to complete.",
+      "invalidAmountUsed": "Transaction failed. Invalid amount used.",
+      "insufficientFunds": "Transaction failed. You have insufficient funds.",
+      "invalidReferenceNumber": "Sorry, the reference number you entered is invalid.",
+      "duplicateTransaction": "Sorry, an error occurred whilst transacting. Please contact support or try again.",
+      "invalidShortCode": "Sorry the till number you entered does not exist.",
+      "customerTransactionLimitReached": "Sorry, you have reached your transaction limit.",
+      "processingFailed": "Failed to process transaction. Please try again or contact support."
     }
   }
 }

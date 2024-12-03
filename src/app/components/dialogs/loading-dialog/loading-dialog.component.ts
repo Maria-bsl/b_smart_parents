@@ -1,6 +1,4 @@
 import { AfterViewInit, Component } from '@angular/core';
-//import * as anime from 'animejs';
-import anime from 'animejs/lib/anime.es';
 
 @Component({
   selector: 'app-loading-dialog',
@@ -9,18 +7,6 @@ import anime from 'animejs/lib/anime.es';
   templateUrl: './loading-dialog.component.html',
   styleUrl: './loading-dialog.component.scss',
 })
-export class LoadingDialogComponent implements AfterViewInit {
+export class LoadingDialogComponent {
   constructor() {}
-  private rotateDiv() {
-    anime({
-      targets: '.box-1',
-      loop: true,
-      rotate: '1turn',
-      backgroundColor: '#FFF',
-      duration: 800,
-    });
-  }
-  ngAfterViewInit(): void {
-    this.rotateDiv();
-  }
 }

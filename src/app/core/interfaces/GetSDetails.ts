@@ -19,3 +19,7 @@ export interface GetSDetails {
   Package_Name: string;
   Package_Status: string;
 }
+
+export interface GetSDetailsErrorStatus {
+  status: string;
+}

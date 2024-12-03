@@ -6,6 +6,7 @@ import { AppConfigService } from '../../app-config/app-config.service';
 import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
 import { GetSDetailStudents } from 'src/app/core/interfaces/GetSDetails';
 import { UnsubscriberService } from '../../unsubscriber/unsubscriber.service';
+import { LoadingService } from '../../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,8 @@ export class AttendancePageService {
   constructor(
     private apiService: ApiConfigService,
     private appConfig: AppConfigService,
-    private unsubscribe: UnsubscriberService
+    private unsubscribe: UnsubscriberService,
+    private loadingService: LoadingService
   ) {}
   requestAttendanceScore() {
     const body: StudentDetailsForm = {
@@ -27,12 +29,12 @@ export class AttendancePageService {
       From_Date: undefined,
       To_Date: undefined,
     };
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .getAttendanceScore(body)
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results) => {

@@ -1,3 +1,11 @@
+@view-transition {
+  navigation: auto;
+}
+
 .custom-error-btn {
   color: var(--sys-error);
+}
+
+.icon-primary-color {
+  background-color: var(--sys-inverse-primary);
 }

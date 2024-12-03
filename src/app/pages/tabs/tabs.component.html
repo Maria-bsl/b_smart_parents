@@ -1,32 +1,30 @@
-<ion-content>
-  <div class="w-full h-full relative">
-    <ion-router-outlet></ion-router-outlet>
-    <div class="absolute bottom-5 left-0 right-0 w-full px-16">
-      <mat-toolbar
-        class="w-full h-full flex flex-row justify-between !py-8 rounded-3xl shadow"
-      >
-        <button
-          routerLinkActive="isActive"
-          [routerLink]="'/tabs/tab-1'"
-          mat-icon-button
-        >
-          <mat-icon svgIcon="house-door-fill"></mat-icon>
-        </button>
-        <button
-          routerLinkActive="isActive"
-          [routerLink]="'/tabs/tab2'"
-          mat-icon-button
-        >
-          <mat-icon svgIcon="bus-front"></mat-icon>
-        </button>
-        <button
-          routerLinkActive="isActive"
-          [routerLink]="'/tabs/tab3'"
-          mat-icon-button
-        >
-          <mat-icon svgIcon="box-fill"></mat-icon>
-        </button>
-      </mat-toolbar>
-    </div>
-  </div>
-</ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button
+      routerLinkActive="isActive"
+      tab="tab-1"
+      [routerLink]="'/tabs/tab-1'"
+    >
+      <ion-icon size="large" name="home"></ion-icon>
+      <ion-label>{{ "defaults.labels.home" | translate }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button
+      routerLinkActive="isActive"
+      tab="transport"
+      [routerLink]="'/tabs/transport'"
+    >
+      <ion-icon size="large" name="bus-outline"></ion-icon>
+      <ion-label>{{ "defaults.labels.transport" | translate }}</ion-label>
+    </ion-tab-button>
+
+    <!-- <ion-tab-button
+      routerLinkActive="isActive"
+      tab="tab3"
+      [routerLink]="'/tabs/tab3'"
+    >
+      <ion-icon size="large" name="cube-outline"></ion-icon>
+      <ion-label>{{ "defaults.labels.package" | translate }}</ion-label>
+    </ion-tab-button> -->
+  </ion-tab-bar>
+</ion-tabs>

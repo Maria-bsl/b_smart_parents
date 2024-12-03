@@ -23,7 +23,11 @@ import {
 import { importProvidersFrom } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideLottieOptions } from 'ngx-lottie';
-import { authsInterceptor } from './app/core/interceptors/auths/auths.interceptor';
+import {
+  authsInterceptor,
+  timeoutInterceptor,
+} from './app/core/interceptors/auths/auths.interceptor';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -33,7 +37,8 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
-    provideHttpClient(withInterceptors([authsInterceptor])),
+    //provideHttpClient(withInterceptors([authsInterceptor])),
+    provideHttpClient(),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),
@@ -45,6 +50,7 @@ bootstrapApplication(AppComponent, {
       player: () => import('lottie-web'),
     }),
     importProvidersFrom([
+      MatDialogModule,
       TranslateModule.forRoot({
         loader: {
           provide: TranslateLoader,

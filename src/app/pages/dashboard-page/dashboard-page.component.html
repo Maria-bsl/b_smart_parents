@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content class="w-screen h-screen relative">
   <div
     class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
   >
@@ -17,7 +17,7 @@
             {{ dashboardService.selectedStudent.Acad_Year }}
           </mat-chip>
         </div>
-        <button
+        <!-- <button
           mat-icon-button
           class="icon-primary-color"
           aria-label="Example icon button with a vertical three dot icon"
@@ -27,7 +27,7 @@
             matPrefix
             svgIcon="person-fill"
           ></mat-icon>
-        </button>
+        </button> -->
       </mat-toolbar>
     </div>
     <span class="my-8"></span>
@@ -51,9 +51,15 @@
                 ></mat-icon>
               </button>
               <ion-text class="mat-headline-medium !font-semibold">
-                @if (dashboardService.overallAttendance$) {
-                {{ (dashboardService.overallAttendance$ | async)?.Present }}
-                } @else { 0% }
+                <ng-container
+                  *ngIf="overallAttendance$ | async as overallAttendance"
+                >
+                  @if (overallAttendance.length > 0) {
+                  {{ overallAttendance[0].Present }}
+                  } @else {
+                  {{ "0%" }}
+                  }
+                </ng-container>
               </ion-text>
               <ion-text class="mat-body-large !font-semibold placeholer-text">
                 {{ "dashboardPage.labels.attendanceText" | translate }}
@@ -71,14 +77,22 @@
                   class="text-[#3FB74B] !scale-x-150 !scale-y-150"
                 ></mat-icon>
               </button>
-              <ion-text class="mat-title-large !font-semibold">
-                @if (dashboardService.pendingStudentInvoices$) {
-                {{
-                  (dashboardService.pendingStudentInvoices$ | async)!
-                    | accumulateArrayValue : "Pending_Amount"
-                    | currency : "TZS"
-                }}
-                }
+              <ion-text class="mat-title-medium !font-semibold">
+                <ng-container
+                  *ngIf="
+                    pendingStudentInvoices$ | async as pendingStudentInvoices
+                  "
+                >
+                  @if (pendingStudentInvoices.length > 0) {
+                  {{
+                    pendingStudentInvoices
+                      | accumulateArrayValue : "Pending_Amount"
+                      | currency : "TZS"
+                  }}
+                  } @else {
+                  {{ 0 | currency : "TZS" }}
+                  }
+                </ng-container>
               </ion-text>
               <ion-text class="mat-body-large !font-semibold placeholer-text">{{
                 "dashboardPage.labels.feesText" | translate
@@ -144,6 +158,18 @@
           </div>
         </mat-grid-tile>
         <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/library'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
+            <ion-text class="mat-body-medium">{{
+              "dashboardPage.labels.library" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
           [routerLink]="'/tabs/tab-1/change-password'"
           matRipple
           class="module-grid-tile rounded-lg"
@@ -155,9 +181,13 @@
             }}</ion-text>
           </div>
         </mat-grid-tile>
-        <mat-grid-tile matRipple class="module-grid-tile rounded-lg">
+        <mat-grid-tile
+          (click)="navigateToHomeScreen()"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
+            <mat-icon matPrefix svgIcon="box-arrow-right"></mat-icon>
             <ion-text class="mat-body-medium">{{
               "dashboardPage.labels.switchAccount" | translate
             }}</ion-text>

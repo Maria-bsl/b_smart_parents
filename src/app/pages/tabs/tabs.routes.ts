@@ -81,6 +81,29 @@ export const routes: Routes = [
                 (c) => c.AttendancePageComponent
               ),
           },
+          {
+            path: 'library',
+            loadComponent: () =>
+              import('../library-page/library-page.component').then(
+                (c) => c.LibraryPageComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'transport',
+        loadComponent: () =>
+          import('../transport/transport.component').then(
+            (c) => c.TransportComponent
+          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('../maps-page/maps-page.component').then(
+                (c) => c.MapsPageComponent
+              ),
+          },
         ],
       },
     ],

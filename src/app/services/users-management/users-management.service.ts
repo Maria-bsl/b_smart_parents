@@ -5,11 +5,14 @@ import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
 import {
   BehaviorSubject,
+  catchError,
   finalize,
   map,
   Observable,
   of,
   Subject,
+  tap,
+  throwError,
   zip,
 } from 'rxjs';
 import { Router } from '@angular/router';
@@ -18,6 +21,11 @@ import { GetFacilities } from 'src/app/core/interfaces/GetFacilities';
 import { GetParentDetail } from 'src/app/core/interfaces/GetParentDetails';
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { toast } from 'ngx-sonner';
+import { LoadingService } from '../loading-service/loading.service';
+import {
+  GetSDetails,
+  GetSDetailsErrorStatus,
+} from 'src/app/core/interfaces/GetSDetails';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +36,8 @@ export class UsersManagementService {
     private appConfigService: AppConfigService,
     private _unsubscribe: UnsubscriberService,
     private router: Router,
-    private tr: TranslateService
+    private tr: TranslateService,
+    private loadingService: LoadingService
   ) {}
   private displayFailedToLoginError() {
     let failedMessageObs = 'defaults.failed';
@@ -53,11 +62,7 @@ export class UsersManagementService {
       'changePasswordPage.changePasswordForm.errors.failedToUpdatePasswordText';
     this.appConfigService.openAlertMessageBox(failedMessageObs, msgObs);
   }
-  private requestChangePassword(
-    email: string,
-    password: string,
-    loading: HTMLIonLoadingElement
-  ) {
+  private requestChangePassword(email: string, password: string) {
     let form = new Map();
     form.set('Email_Address', email);
     form.set('New_Password', password);
@@ -65,7 +70,7 @@ export class UsersManagementService {
       .changePassword(Object.fromEntries(form))
       .pipe(
         this._unsubscribe.takeUntilDestroy,
-        finalize(() => loading.dismiss())
+        finalize(() => this.loadingService.dismiss())
       )
       .subscribe({
         next: (res: any) => {
@@ -101,12 +106,12 @@ export class UsersManagementService {
     username: string,
     parentDetail$: Subject<GetParentDetail | null>
   ) {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .getParentDetails({ User_Name: username })
         .pipe(
           this._unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -132,7 +137,7 @@ export class UsersManagementService {
     });
   }
   changePassword(password: string) {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       let getParentDetailsObs = this.apiService.getParentDetails({
         User_Name: localStorage.getItem('User_Name')!,
       });
@@ -146,18 +151,17 @@ export class UsersManagementService {
                 let parentDetail = details[0] as GetParentDetail;
                 this.requestChangePassword(
                   parentDetail.Email_Address,
-                  password,
-                  loading
+                  password
                 );
                 break;
               case 'UserName not exists':
               default:
-                loading.dismiss();
+                this.loadingService.dismiss();
                 this.displayFailedChangePasswordError();
                 break;
             }
           } else {
-            loading.dismiss();
+            this.loadingService.dismiss();
             this.displayFailedChangePasswordError();
           }
         },
@@ -167,13 +171,28 @@ export class UsersManagementService {
       });
     });
   }
+  private signInUser(body: FLoginForm) {
+    return this.apiService.signIn(body).pipe(
+      this._unsubscribe.takeUntilDestroy,
+      tap({
+        next: (value) => {
+          const hasErrorStatus = Object.keys(value[0]).includes('status');
+          if (hasErrorStatus) throw Error('Username or password is incorrect.');
+        },
+      }),
+      finalize(() => this.loadingService.dismiss()),
+      catchError((err) => {
+        throw err;
+      })
+    );
+  }
   loginUser(body: FLoginForm) {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .signIn(body)
         .pipe(
           this._unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -189,6 +208,7 @@ export class UsersManagementService {
               let GetSDetails = JSON.stringify(res[0]);
               localStorage.setItem('GetSDetails', GetSDetails);
               localStorage.setItem('User_Name', body.User_Name);
+              localStorage.setItem('Password', body.Password);
               this.router.navigate(['/home']);
             }
           },
@@ -199,12 +219,12 @@ export class UsersManagementService {
     });
   }
   requestToken(body: FLoginForm) {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .requestToken(body)
         .pipe(
           this._unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -219,9 +239,9 @@ export class UsersManagementService {
     });
   }
   logOutUser() {
-    this.appConfigService.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       setTimeout(() => {
-        loading.dismiss();
+        this.loadingService.dismiss();
         localStorage.clear();
         this.router.navigate(['/login']);
       }, 1500);

@@ -1,14 +1,8 @@
-<ion-content>
+<ion-content class="w-screen h-screen relative">
   <div
     id="bg-cover"
     class="absolute top-0 left-0 right-0 bottom-0 w-full h-full z-0"
   >
-    <!-- <img
-  class="object-fill w-full h-full z-0"
-  src="assets/components/test-frame-1.png"
-  alt=""
-  srcset=""
-  /> -->
     <img
       class="object-fill w-full h-full z-0"
       src="assets/components/test-frame-1.png"
@@ -47,36 +41,46 @@
         >
           <div
             [@inOutAnimation]
-            *ngIf="studentMarks$ | async as studentMarks; else noDataYet"
+            *ngIf="
+              getCurrentPath() === examTypeListRoute;
+              else studentMarkTemplate
+            "
+            class="w-full"
           >
-            <img src="assets/components/Grade_Pertange.png" alt="" srcset="" />
-            <div
-              class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col"
-            >
-              <ion-text
-                [textContent]="studentMarks.Average"
-                class="!font-semibold mat-headline-small"
-              >
-                {{ studentMarks.Average }}
-              </ion-text>
-              <ion-text
-                [textContent]="
-                  ('resultsPage.labels.grade' | translate) +
-                  ': ' +
-                  studentMarks.Grade
-                "
-                class="!font-semibold mat-title-small text-center"
-              >
-                {{ studentMarks.Grade }}
-              </ion-text>
-            </div>
-          </div>
-          <ng-template #noDataYet>
             <ng-lottie
               [styles]="styles"
               class="!absolute !top-0"
               [options]="options"
             ></ng-lottie>
+          </div>
+          <ng-template #studentMarkTemplate>
+            <div *ngIf="studentMarks$ | async as studentMarks">
+              <img
+                src="assets/components/Grade_Pertange.png"
+                alt=""
+                srcset=""
+              />
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col"
+              >
+                <ion-text
+                  [textContent]="studentMarks.Average"
+                  class="!font-semibold mat-headline-small"
+                >
+                  {{ studentMarks.Average }}
+                </ion-text>
+                <ion-text
+                  [textContent]="
+                    ('resultsPage.labels.grade' | translate) +
+                    ': ' +
+                    studentMarks.Grade
+                  "
+                  class="!font-semibold mat-title-small text-center"
+                >
+                  {{ studentMarks.Grade }}
+                </ion-text>
+              </div>
+            </div>
           </ng-template>
         </div>
       </div>

@@ -14,6 +14,8 @@ import {
   IStudentMarksDetail,
 } from 'src/app/core/interfaces/StudentMarks';
 import { Router } from '@angular/router';
+import { LoadingService } from '../loading-service/loading.service';
+import jsPDF from 'jspdf';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +29,7 @@ export class StudentsManagementService {
     private appConfig: AppConfigService,
     private apiConfig: ApiConfigService,
     private unsubscribe: UnsubscriberService,
-    private tr: TranslateService,
+    private loadingService: LoadingService,
     private router: Router
   ) {}
   private displayFailedToFetchTimeTableError() {
@@ -63,12 +65,12 @@ export class StudentsManagementService {
     );
   }
   requestTimeTable(form: FTimeTableForm) {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiConfig
         .getTimeTable(form)
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -83,12 +85,12 @@ export class StudentsManagementService {
     });
   }
   requestExamTypes(body: FExamType) {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiConfig
         .getExamTypes(body)
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (res: any) => {
@@ -105,14 +107,14 @@ export class StudentsManagementService {
     });
   }
   requestStudentMarksAndMarksDetails(body: FStudentMarksForm) {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       let studentMarksObs = this.apiConfig.getStudentMarks(body);
       let studentMarkDetails = this.apiConfig.getStudentMarkDetails(body);
       let marksReq = zip(studentMarksObs, studentMarkDetails);
       marksReq
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results) => {
@@ -141,13 +143,20 @@ export class StudentsManagementService {
         });
     });
   }
-  downloadStudentMarksDetailsReport(
-    fullName: string,
-    labels: string[],
-    element: HTMLElement
-  ) {
-    console.log(fullName);
-    console.log(labels);
-    console.log(element);
-  }
+  // downloadStudentMarksDetailsReport(
+  //   fullName: string,
+  //   labels: string[],
+  //   element: HTMLElement
+  // ) {
+  //   // let doc = new jsPDF(
+  //   //   element.clientWidth > element.clientHeight ? 'l' : 'p',
+  //   //   'mm',
+  //   //   [element.clientWidth, element.clientHeight]
+  //   // );
+  //   // doc.html(element, {
+  //   //   callback(doc) {
+  //   //     doc.save('results.pdf');
+  //   //   },
+  //   // });
+  // }
 }

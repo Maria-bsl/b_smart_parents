@@ -4,6 +4,11 @@ import { loginGuard } from './guards/login/login.guard';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
     path: 'home',
     loadComponent: () =>
       import('./pages/home/home.page').then((m) => m.HomePage),
@@ -37,8 +42,26 @@ export const routes: Routes = [
       import('./pages/tabs/tabs.routes').then((t) => t.routes),
   },
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
+    path: 'package',
+    loadComponent: () =>
+      import('./pages/package-page/package-page.component').then(
+        (c) => c.PackagePageComponent
+      ),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import(
+            './pages/latest-subscriptions-page/latest-subscriptions-page.component'
+          ).then((c) => c.LatestSubscriptionsPageComponent),
+      },
+      {
+        path: 'subscribe',
+        loadComponent: () =>
+          import('./pages/subscription-page/subscription-page.component').then(
+            (c) => c.SubscriptionPageComponent
+          ),
+      },
+    ],
   },
 ];

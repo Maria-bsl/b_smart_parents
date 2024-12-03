@@ -32,6 +32,7 @@ import { Observable } from 'rxjs';
 import { IStudentMarks } from 'src/app/core/interfaces/StudentMarks';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { inOutAnimation } from 'src/app/core/shared/fade-in-out-animation';
+import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 
 @Component({
   selector: 'app-results-page',
@@ -75,12 +76,18 @@ export class ResultsPageComponent implements OnInit {
     maxWidth: '500px',
     margin: '-90px auto',
   };
+  examTypeListRoute: string = '/tabs/tab-1/results';
   constructor(
     private studentService: StudentsManagementService,
-    private unsubscribe: UnsubscriberService
+    private appConfig: AppConfigService
   ) {}
   ngOnInit() {}
+  getCurrentPath() {
+    return this.appConfig.getCurrentPath();
+  }
   onAnimate(animationItem: AnimationItem) {
     //console.log(animationItem);
+    console.log(this.appConfig.getCurrentPath());
+    return;
   }
 }

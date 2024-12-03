@@ -11,6 +11,7 @@ import { firstValueFrom, zip } from 'rxjs';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { isPlatform } from '@ionic/angular/standalone';
+import { LoadingService } from '../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,6 @@ export class AppConfigService {
   constructor(
     private location: Location,
     private dialog: MatDialog,
-    private loadingController: LoadingController,
     private iconRegistry: MatIconRegistry,
     private tr: TranslateService,
     private unsubscribe: UnsubscriberService,
@@ -33,6 +33,9 @@ export class AppConfigService {
         message: message,
       },
     });
+  }
+  getCurrentPath() {
+    return this.location.path();
   }
   openAlertMessageBox(title: string, message: string) {
     let titleObs = this.tr.get(title);
@@ -75,17 +78,17 @@ export class AppConfigService {
     // Return the value of the variable
     return style.getPropertyValue(variableName).trim();
   }
-  async startLoading() {
-    if (this.loading) this.loading = null;
-    let attributes = new Map();
-    attributes.set('aria-hidden', false);
-    this.loading = await this.loadingController.create({
-      spinner: 'circles',
-      htmlAttributes: attributes,
-    });
-    await this.loading.present();
-    return this.loading;
-  }
+  // async startLoading() {
+  //   if (this.loading) this.loading = null;
+  //   let attributes = new Map();
+  //   attributes.set('aria-hidden', false);
+  //   this.loading = await this.loadingController.create({
+  //     spinner: 'circles',
+  //     htmlAttributes: attributes,
+  //   });
+  //   await this.loading.present();
+  //   return this.loading;
+  // }
   openExternalLink(link: string) {
     window.open(link, '_blank', 'noopener,noreferrer');
   }

@@ -40,6 +40,7 @@ import {
   ExternalLinks,
   PackageNames,
 } from 'src/app/core/interfaces/package-names';
+import { LoadingService } from '../../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +53,8 @@ export class RegisterPageService {
     private apiService: ApiConfigService,
     private unsubscribe: UnsubscriberService,
     private router: Router,
-    private tr: TranslateService
+    private tr: TranslateService,
+    private loadingService: LoadingService
   ) {}
   private validateRegistrationForm() {
     let errors = { title: 'defaults.errors.invalidForm', message: '' };
@@ -68,10 +70,10 @@ export class RegisterPageService {
   }
   private registrationSuccessHandler() {
     const swalIsDismissed = () => {
-      this.appConfig.startLoading().then((loading) => {
+      this.loadingService.startLoading().then((loading) => {
         setTimeout(() => {
           this.resetForm();
-          loading.dismiss();
+          this.loadingService.dismiss();
           this.router.navigate(['/login']);
         }, 800);
       });
@@ -120,12 +122,12 @@ export class RegisterPageService {
     });
   }
   private requestRegisterParent(body: FRegisterParent) {
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       this.apiService
         .registerParent(body)
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results: any) => {

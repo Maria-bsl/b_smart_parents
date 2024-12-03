@@ -1,0 +1,222 @@
+<ion-content class="w-screen h-screen relative">
+  <mat-toolbar
+    class="!bg-transparent !flex !flex-row !items-center !justify-between !w-full"
+  >
+    <ion-buttons slot="start">
+      <ion-back-button
+        class="text-black bg-white rounded-full"
+        defaultHref="/home"
+      ></ion-back-button>
+    </ion-buttons>
+    <h4 class="mat-title-medium pt-3 !tracking-wider">
+      {{ "latestSubscriptionsPage.labels.subscriptionPlans" | translate }}
+    </h4>
+    <button mat-icon-button class="!bg-white opacity-0">
+      <mat-icon svgIcon="chevron-left" matPrefix></mat-icon>
+    </button>
+  </mat-toolbar>
+  <div class="flex flex-col w-full mt-4">
+    <mat-card
+      [class]="
+        studentDetails.Package_Name === 'Gold'
+          ? '!bg-[#F7EF6A]'
+          : studentDetails.Package_Name === 'Trail'
+          ? '!bg-[#EBDAB0]'
+          : '!bg-[#EAEAEA]'
+      "
+      appearance="raised"
+      class="mx-4 relative"
+    >
+      <div class="flex flex-col w-full">
+        <div class="flex flex-row items-center justify-between px-2">
+          <img
+            class="w-16"
+            [src]="studentDetails.Package_Name | switchPackageName"
+            alt=""
+            srcset=""
+          />
+          <div
+            class="flex flex-row items-center space-x-1 p-1 border border-[var(--md-sys-color-on-primary)] rounded-full"
+          >
+            <div
+              class="w-2 h-2 rounded-full bg-[var(--md-sys-color-on-primary)]"
+            ></div>
+            <button
+              class="mat-body-small !text-[var(--md-sys-color-on-primary)]"
+            >
+              {{ "latestSubscriptionsPage.labels.current" | translate }}
+            </button>
+          </div>
+        </div>
+        <ion-title class="mat-headline-small !tracking-widest">{{
+          studentDetails.Package_Name
+        }}</ion-title>
+        <ng-container *ngIf="package$ && package$ | async as packages">
+          <div class="flex flex-row items-center flex-wrap ml-6 mr-2">
+            <ng-container
+              *ngFor="
+                let packageName of (
+                  packages | findPackage : studentDetails.Package_Mas_Sno
+                )?.M_Name?.split(',');
+                index as ind
+              "
+            >
+              <div class="flex flex-row items-center">
+                <button class="mat-body-large">
+                  {{ packageName.replace(",", "") }}
+                </button>
+                <div
+                  *ngIf="
+                    ind !==
+                    (
+                      packages | findPackage : studentDetails.Package_Mas_Sno
+                    )?.M_Name?.split(',')?.length! -
+                      1
+                  "
+                  class="w-2 h-2 bg-black mx-2 rounded-full"
+                ></div>
+              </div>
+            </ng-container>
+          </div>
+          <div class="flex flex-row items-center justify-between my-3">
+            <button class="ml-6 mat-body-small !font-semibold text-gray-500">
+              {{
+                ((packages | findPackage : studentDetails.Package_Mas_Sno)
+                  ?.Package_Amount | currency : "TZS") +
+                  "/" +
+                  (packages | findPackage : studentDetails.Package_Mas_Sno)
+                    ?.Package_Days +
+                  ("latestSubscriptionsPage.labels.days" | translate)
+              }}
+            </button>
+            <button
+              (click)="
+                openSubscriptionPage($event, studentDetails.Package_Mas_Sno)
+              "
+              mat-button
+              class="flex flex-row-reverse space-x-1 items-center"
+            >
+              <mat-icon svgIcon="chevron-right" matPrefix></mat-icon>
+              <a>
+                {{ "latestSubscriptionsPage.labels.renew" | translate }}
+              </a>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </mat-card>
+  </div>
+  <div class="flex flex-col w-full px-4 mt-8">
+    <h4 class="mat-headline-medium">
+      {{ "latestSubscriptionsPage.labels.availablePlans" | translate }}
+    </h4>
+    <ng-container *ngIf="package$ && package$ | async as packages">
+      <div class="flex flex-col w-full space-y-2">
+        @for (package of packages; track package) {
+        <mat-card
+          class="relative"
+          matRipple
+          *ngIf="package.Package_Mas_Sno !== studentDetails.Package_Mas_Sno"
+          appearance="outlined"
+          (click)="openSubscriptionPage($event, package.Package_Mas_Sno)"
+        >
+          <mat-card-content>
+            <div class="flex flex-row items-center space-x-1 relative">
+              <mat-icon
+                class="absolute right-2 top-1/2 -translate-y-1/2"
+                svgIcon="chevron-right"
+                matPrefix
+              ></mat-icon>
+              <img
+                class="w-14"
+                mat-card-image
+                [src]="package.Package_Name | switchPackageName"
+                alt="Photo of a Shiba Inu"
+              />
+              <div class="flex flex-col">
+                <mat-card-title class="uppercase !font-semibold">{{
+                  package.Package_Name
+                }}</mat-card-title>
+                <mat-card-subtitle
+                  class="!text-[var(--md-sys-color-neutral)]"
+                  >{{
+                    (package.Package_Amount | currency : "TZS") +
+                      "/" +
+                      package.Package_Days +
+                      ("latestSubscriptionsPage.labels.days" | translate)
+                  }}</mat-card-subtitle
+                >
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        }
+      </div>
+    </ng-container>
+  </div>
+  <div class="flex flex-col w-full px-4 mt-8">
+    <h4 class="mat-headline-medium">
+      {{ "latestSubscriptionsPage.labels.packageHistory" | translate }}
+    </h4>
+    <div class="carousel carousel-center rounded-box py-2 space-x-1">
+      <ng-container
+        *ngIf="packageHistory$ && packageHistory$ | async as packageHistoryList"
+      >
+        @for (packageHistory of packageHistoryList; track packageHistory) {
+        <mat-card
+          appearance="raised"
+          [class]="
+            packageHistory.Package_Name === 'Gold'
+              ? '!bg-[#F7EF6A]'
+              : packageHistory.Package_Name === 'Trail'
+              ? '!bg-[#EBDAB0]'
+              : '!bg-[#EAEAEA]'
+          "
+          class="!carousel-item !w-96"
+        >
+          <div class="flex flex-col w-full">
+            <div class="flex flex-row items-center justify-between px-2">
+              <img
+                class="w-16 h-16"
+                [src]="packageHistory.Package_Name | switchPackageName"
+                alt=""
+                srcset=""
+              />
+              <div class="flex flex-row items-center space-x-1 p-1">
+                <button class="mat-label-small">
+                  {{ packageHistory.Submit_Date }}
+                </button>
+              </div>
+            </div>
+            <ion-title class="mat-headline-small !tracking-widest">{{
+              packageHistory.Package_Name
+            }}</ion-title>
+            <ng-container *ngIf="package$ && package$ | async as packages">
+              <div class="flex flex-row items-center flex-wrap ml-6 mr-6">
+                <ng-container
+                  *ngFor="
+                    let packageName of packageHistory?.M_Name?.split(',');
+                    index as ind
+                  "
+                >
+                  <div class="flex flex-row items-center">
+                    <button class="mat-label-large">
+                      {{ packageName.replace(",", "") }}
+                    </button>
+                    <div
+                      *ngIf="
+                        ind !== packageHistory?.M_Name?.split(',')?.length! - 1
+                      "
+                      class="w-2 h-2 bg-black mx-2 rounded-full"
+                    ></div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </mat-card>
+        }
+      </ng-container>
+    </div>
+  </div>
+</ion-content>

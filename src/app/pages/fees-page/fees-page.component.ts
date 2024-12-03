@@ -1,13 +1,16 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
   OnInit,
+  QueryList,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -27,11 +30,18 @@ import {
   IonBackButton,
   IonText,
 } from '@ionic/angular/standalone';
-import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import jsPDF from 'jspdf';
+import { firstValueFrom, from, map, switchMap, tap } from 'rxjs';
+import { PayWithMpesaComponent } from 'src/app/components/dialogs/pay-with-mpesa/pay-with-mpesa.component';
+import { InvoiceReceiptComponent } from 'src/app/components/templates/invoice-receipt/invoice-receipt.component';
 import { AppUtilities } from 'src/app/core/utils/AppUtilities';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
+import { JspdfUtilsService } from 'src/app/services/jsdpdf-utils/jspdf-utils.service';
+import { LoadingService } from 'src/app/services/loading-service/loading.service';
 import { FeesPageService } from 'src/app/services/pages/fees-page-service/fees-page.service';
+import { PayWithMpesaService } from 'src/app/services/pay-with-mpesa/pay-with-mpesa.service';
+import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 
 @Component({
   selector: 'app-fees-page',
@@ -52,7 +62,9 @@ import { FeesPageService } from 'src/app/services/pages/fees-page-service/fees-p
     MatDividerModule,
     MatListModule,
     MatIconModule,
+    InvoiceReceiptComponent,
   ],
+  providers: [DatePipe, CurrencyPipe],
 })
 export class FeesPageComponent implements OnInit, AfterViewInit {
   studentInvoices$ = this.feesService.studentInvoices$.asObservable().pipe(
@@ -60,7 +72,10 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
       invoices.map((invoice) => {
         return {
           ...invoice,
-          Expired_Date: AppUtilities.convertToDate(
+          // Expired_Date: AppUtilities.convertToDate(
+          //   invoice.Invoice_Date as string
+          // ),
+          Invoice_Date: AppUtilities.convertToDate(
             invoice.Invoice_Date as string
           ),
         };
@@ -95,10 +110,17 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
         })
       )
     );
-
+  @ViewChildren(MatCard, { read: ElementRef }) matCards!: QueryList<ElementRef>;
   constructor(
     public feesService: FeesPageService,
-    private appConfig: AppConfigService
+    private appConfig: AppConfigService,
+    private jsPdfService: JspdfUtilsService,
+    private loadingService: LoadingService,
+    private tr: TranslateService,
+    private datePipe: DatePipe,
+    private currencyPipe: CurrencyPipe,
+    private _dialog: MatDialog,
+    private _unsubscribe: UnsubscriberService
   ) {
     let icons = ['arrow-right', 'download'];
     this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
@@ -106,5 +128,38 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
   ngOnInit() {
     this.feesService.initFeesPage();
+  }
+  // downloadInvoiceFee(event: MouseEvent, element: HTMLDivElement) {
+  //   this.loadingService.startLoading().then((loading) => {
+  //     firstValueFrom(this.studentInvoices$).then((c) => {
+  //       (event.target as HTMLButtonElement).classList.remove('flex');
+  //       (event.target as HTMLButtonElement).classList.add('hidden');
+  //       this.jsPdfService.exportHtml(element);
+  //       (event.target as HTMLButtonElement).classList.remove('hidden');
+  //       (event.target as HTMLButtonElement).classList.add('flex');
+  //       this.loadingService.dismiss();
+  //     });
+  //   });
+  // }
+  openPayFees(invoice: any) {
+    const dialog = this._dialog.open(PayWithMpesaComponent, {
+      width: '400px',
+      data: {
+        amount: invoice.Pending_Amount,
+        description: invoice.Fee_Type,
+      },
+      panelClass: 'm-pesa-panel',
+      disableClose: true,
+    });
+    dialog.componentInstance.mpesaService.transactionCompleted
+      .asObservable()
+      .pipe(this._unsubscribe.takeUntilDestroy)
+      .subscribe({
+        next: async (isSuccess) => {
+          if (isSuccess) {
+            dialog.close();
+          }
+        },
+      });
   }
 }

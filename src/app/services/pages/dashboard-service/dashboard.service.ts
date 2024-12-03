@@ -12,44 +12,53 @@ import {
   StudentInvoice,
   StudentPendingInvoice,
 } from 'src/app/core/types/student-invoices';
+import { LoadingService } from '../../loading-service/loading.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
-  overallAttendance$!: Observable<OverallAttendance>; //= new BehaviorSubject<OverallAttendance | null>(null);
-  pendingStudentInvoices$!: Observable<StudentPendingInvoice[]>;
-  selectedStudent: GetSDetailStudents = JSON.parse(
-    localStorage.getItem('selectedStudent')!
-  );
+  overallAttendance$ = new BehaviorSubject<OverallAttendance[]>([]);
+  pendingStudentInvoices$ = new BehaviorSubject<StudentPendingInvoice[]>([]);
+  // selectedStudent: GetSDetailStudents = JSON.parse(
+  //   localStorage.getItem('selectedStudent')!
+  // );
+  selectedStudent!: GetSDetailStudents;
   constructor(
     private tr: TranslateService,
     private appConfig: AppConfigService,
     private apiService: ApiConfigService,
     private _unsubscriber: UnsubscriberService,
-    private usersService: UsersManagementService
-  ) {}
+    private usersService: UsersManagementService,
+    private loadingService: LoadingService
+  ) {
+    //this.initDashboard();
+  }
   initDashboard() {
+    this.selectedStudent = JSON.parse(localStorage.getItem('selectedStudent')!);
     let body: StudentDetailsForm = {
-      Facility_Reg_Sno: this.selectedStudent.Facility_Reg_Sno,
+      Facility_Reg_Sno: this.selectedStudent.Facility_Reg_Sno.toString(),
       Admission_No: this.selectedStudent.Admission_No,
       From_Date: undefined,
       To_Date: undefined,
     };
-    this.appConfig.startLoading().then((loading) => {
+    this.loadingService.startLoading().then((loading) => {
       let attendanceObs = this.apiService.getAttendance(body);
       let invoicesObs = this.apiService.getStudentPendingInvoices(body);
       let merged = zip(attendanceObs, invoicesObs);
       merged
         .pipe(
           this._unsubscriber.takeUntilDestroy,
-          finalize(() => loading.dismiss())
+          finalize(() => this.loadingService.dismiss())
         )
         .subscribe({
           next: (results) => {
             let [attendance, invoices] = results;
-            this.overallAttendance$ = of(attendance[0]);
-            this.pendingStudentInvoices$ = of(invoices);
+            this.overallAttendance$.next(attendance);
+            this.pendingStudentInvoices$.next(invoices);
+          },
+          error: (err) => {
+            console.log('error happened here');
           },
         });
     });

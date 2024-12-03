@@ -37,6 +37,7 @@ export class LoadingService {
       disableClose: true,
     });
     this.loading$.next(dialogRef);
+    return firstValueFrom(this.loading$.asObservable());
   }
   dismiss() {
     this.stopLoading();

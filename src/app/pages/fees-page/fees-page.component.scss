@@ -1,3 +1,7 @@
+@view-transition {
+  navigation: auto;
+}
+
 :host ::ng-deep .mdc-tab {
   padding: 0 !important;
 }
@@ -18,4 +22,8 @@
 :host ::ng-deep .mat-mdc-tab-header {
   border: 1px solid var(--sys-surface-dim) !important;
   border-radius: 20px 20px 20px 20px !important;
+}
+
+:host ::ng-deep .mat-mdc-tab-label-container {
+  overflow-x: auto !important;
 }
