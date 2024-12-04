@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  delay,
   finalize,
+  firstValueFrom,
   from,
   merge,
   mergeAll,
@@ -24,6 +26,7 @@ import {
   StudentPendingInvoice,
 } from 'src/app/core/types/student-invoices';
 import { LoadingService } from '../../loading-service/loading.service';
+import { AttendancePageService } from '../attendance-page-service/attendance-page-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +41,8 @@ export class DashboardService {
     private apiService: ApiConfigService,
     private _unsubscriber: UnsubscriberService,
     private usersService: UsersManagementService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private attendanceService: AttendancePageService
   ) {
     //this.initDashboard();
   }
@@ -59,7 +63,10 @@ export class DashboardService {
           tap((value) => this.pendingStudentInvoices$.next(value)),
           finalize(() => this.loadingService.dismiss())
         )
-        .subscribe({ next: (res) => {}, error: (err) => {} });
+        .subscribe({
+          next: (res) => {},
+          error: (err) => {},
+        });
     });
   }
   logUserOut() {

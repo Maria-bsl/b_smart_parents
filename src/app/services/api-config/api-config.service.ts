@@ -17,7 +17,6 @@ import {
   throwError,
 } from 'rxjs';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
-import { isPlatform } from '@ionic/angular/standalone';
 import {
   FDeleteStudent,
   FRegisterParent,
@@ -48,6 +47,7 @@ import {
 } from 'src/app/core/interfaces/GetSDetails';
 import { Router } from '@angular/router';
 import { AppConfigService } from '../app-config/app-config.service';
+import { isPlatform } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',
@@ -123,9 +123,7 @@ export class ApiConfigService {
   }
   getAttendance(body: StudentDetailsForm): Observable<OverallAttendance[]> {
     return this.performPost(
-      `
-      ${this.baseUrl}/SchoolDetails/GetAttendance
-      `,
+      `${this.baseUrl}/SchoolDetails/GetAttendance`,
       body,
       {}
     );
@@ -134,9 +132,7 @@ export class ApiConfigService {
     body: StudentDetailsForm
   ): Observable<StudentPendingInvoice[]> {
     return this.performPost(
-      `
-      ${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices
-      `,
+      `${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices`,
       body,
       {}
     );

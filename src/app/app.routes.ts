@@ -40,6 +40,7 @@ export const routes: Routes = [
     path: 'tabs',
     loadChildren: () =>
       import('./pages/tabs/tabs.routes').then((t) => t.routes),
+    canActivate: [homeGuard],
   },
   {
     path: 'package',

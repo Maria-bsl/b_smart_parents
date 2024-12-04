@@ -43,4 +43,14 @@ export class AttendancePageService {
         });
     });
   }
+  requestAttendanceOverall() {
+    const body: StudentDetailsForm = {
+      Facility_Reg_Sno: this.selectedStudent.Facility_Reg_Sno,
+      Admission_No: this.selectedStudent.Admission_No,
+    };
+    return this.apiService.getAttendance(body).pipe(
+      this.unsubscribe.takeUntilDestroy,
+      finalize(() => this.loadingService.dismiss())
+    );
+  }
 }

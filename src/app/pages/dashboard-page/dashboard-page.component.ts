@@ -105,38 +105,9 @@ export class DashboardPageComponent implements OnInit {
   }
   ngOnInit() {}
   navigateToHomeScreen() {
-    //this.router.navigateByUrl('/home', { replaceUrl: true });
-    //this.navCtrl.navigateBack('/home', { replaceUrl: true });
     this.navCtrl.navigateRoot('/home');
   }
   logoutClicked(event: any) {
     this.dashboardService.logUserOut();
   }
 }
-
-// import { CommonModule } from '@angular/common';
-// import { Component, OnInit } from '@angular/core';
-// import { MatToolbarModule } from '@angular/material/toolbar';
-// import { IonContent, IonTitle } from '@ionic/angular/standalone';
-// import { DashboardService } from 'src/app/services/pages/dashboard-service/dashboard.service';
-// import { MatChipsModule } from '@angular/material/chips';
-
-// @Component({
-//   selector: 'app-dashboard-page',
-//   templateUrl: './dashboard-page.component.html',
-//   styleUrls: ['./dashboard-page.component.scss'],
-//   standalone: true,
-//   imports: [
-//     CommonModule,
-//     IonTitle,
-//     IonContent,
-//     MatToolbarModule,
-//     MatChipsModule,
-//   ],
-// })
-// export class DashboardPageComponent implements OnInit {
-//   constructor(public dashboardService: DashboardService) {}
-//   ngOnInit(): void {
-//     this.dashboardService.initDashboard();
-//   }
-// }
