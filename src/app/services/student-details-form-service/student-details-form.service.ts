@@ -19,6 +19,7 @@ import { toast } from 'ngx-sonner';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { LoadingService } from '../loading-service/loading.service';
+import { NavController } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',
@@ -47,7 +48,7 @@ export class StudentDetailsFormService {
     private apiService: ApiConfigService,
     private tr: TranslateService,
     private loadingService: LoadingService,
-    private router: Router
+    private navCtrl: NavController
   ) {
     this.requestFacultiesList();
   }
@@ -108,7 +109,8 @@ export class StudentDetailsFormService {
                 next: (msg) => {
                   toast.success(msg);
                   this.studentForm.reset();
-                  this.router.navigate(['/home']);
+                  this.navCtrl.navigateBack('/home');
+                  //this.router.navigate(['/home']);
                 },
               });
             } else if (keys.includes('Status')) {
@@ -121,6 +123,7 @@ export class StudentDetailsFormService {
             } else {
               throw Error('Unexpected response parsed.');
             }
+            this.loadingService.dismiss();
           },
         });
     });

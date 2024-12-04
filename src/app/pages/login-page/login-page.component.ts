@@ -53,11 +53,11 @@ import * as crypto from 'crypto';
 })
 export class LoginPageComponent implements OnInit {
   loginFormGroup: FormGroup = this.fb.group({
-    User_Name: this.fb.control<string>('gud', [
+    User_Name: this.fb.control<string>('', [
       Validators.required,
       //Validators.email,
     ]),
-    Password: this.fb.control<string>('password', [Validators.required]),
+    Password: this.fb.control<string>('', [Validators.required]),
   });
   constructor(
     private fb: FormBuilder,

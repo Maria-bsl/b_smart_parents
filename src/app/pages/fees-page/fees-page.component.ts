@@ -72,9 +72,6 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
       invoices.map((invoice) => {
         return {
           ...invoice,
-          // Expired_Date: AppUtilities.convertToDate(
-          //   invoice.Invoice_Date as string
-          // ),
           Invoice_Date: AppUtilities.convertToDate(
             invoice.Invoice_Date as string
           ),
@@ -124,23 +121,10 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
   ) {
     let icons = ['arrow-right', 'download'];
     this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
-  }
-  ngAfterViewInit(): void {}
-  ngOnInit() {
     this.feesService.initFeesPage();
   }
-  // downloadInvoiceFee(event: MouseEvent, element: HTMLDivElement) {
-  //   this.loadingService.startLoading().then((loading) => {
-  //     firstValueFrom(this.studentInvoices$).then((c) => {
-  //       (event.target as HTMLButtonElement).classList.remove('flex');
-  //       (event.target as HTMLButtonElement).classList.add('hidden');
-  //       this.jsPdfService.exportHtml(element);
-  //       (event.target as HTMLButtonElement).classList.remove('hidden');
-  //       (event.target as HTMLButtonElement).classList.add('flex');
-  //       this.loadingService.dismiss();
-  //     });
-  //   });
-  // }
+  ngAfterViewInit(): void {}
+  ngOnInit() {}
   openPayFees(invoice: any) {
     const dialog = this._dialog.open(PayWithMpesaComponent, {
       width: '400px',

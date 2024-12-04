@@ -75,10 +75,6 @@ export class AddStudentPageComponent implements OnInit {
   ngOnInit(): void {}
   submitStudentForm(event: any) {
     this.studentDetailsFormService.submitForm();
-    // this.appConfig.openAlertMessageBox(
-    //   'Delete Folder',
-    //   "This can't be undone."
-    // );
   }
   resetForm(event: any) {
     this.studentDetailsFormService.studentForm.reset();

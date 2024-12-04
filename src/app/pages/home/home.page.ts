@@ -34,7 +34,7 @@ import { LoadingService } from 'src/app/services/loading-service/loading.service
 import { FDeleteStudent } from 'src/app/core/forms/f-add-student';
 import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
-import { finalize, firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
 import {
@@ -44,6 +44,10 @@ import {
 } from '@angular/material/bottom-sheet';
 import { ProfilePageComponent } from '../profile-page/profile-page.component';
 import NodeRSA from 'encrypt-rsa';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ConfirmMessageBoxComponent } from 'src/app/components/dialogs/confirm-message-box/confirm-message-box.component';
+import { orderBy } from 'lodash';
+import { OrderByPipe } from 'src/app/core/pipes/order-by/order-by.pipe';
 
 @Component({
   selector: 'app-home',
@@ -66,6 +70,7 @@ import NodeRSA from 'encrypt-rsa';
     MatToolbarModule,
     MatBottomSheetModule,
     RouterLink,
+    OrderByPipe,
   ],
 })
 export class HomePage implements OnInit {
@@ -86,7 +91,13 @@ export class HomePage implements OnInit {
     this.registerIcons();
   }
   private registerIcons() {
-    let icons = ['door-open-fill', 'trash-fill', 'person-fill', 'box-fill'];
+    let icons = [
+      'door-open-fill',
+      'trash-fill',
+      'person-fill',
+      'box-fill',
+      'box-arrow-right',
+    ];
     this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
     this.appConfig.addIcons(['plus'], '/assets/feather');
   }
@@ -135,72 +146,86 @@ export class HomePage implements OnInit {
   }
   ngOnInit(): void {
     localStorage.removeItem('selectedStudent');
+    this.getStudentDetails({
+      User_Name: localStorage.getItem('User_Name')!,
+      Password: localStorage.getItem('Password')!,
+    });
   }
   openAddStudentPage() {
-    this.router.navigate(['/add-student']);
+    this.navCtrl.navigateBack('/add-student');
   }
   openNavigationsPages(event: any, student: GetSDetailStudents) {
+    localStorage.setItem('selectedStudent', JSON.stringify(student));
+    // this.navCtrl.navigateBack('/tabs/tab-1/dashboard', {
+    //   //replaceUrl: true,
+    // });
+    this.router.navigate(['/tabs/tab-1/dashboard'], { replaceUrl: true });
+    // this.navCtrl.navigateForward(['/tabs/tab-1/dashboard'], {
+    //   replaceUrl: true,
+    // });
+    //this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+  }
+  private requestRemoveStudent(body: FDeleteStudent) {
     this.loadingService.startLoading().then((loading) => {
-      setTimeout(() => {
-        this.loadingService.dismiss();
-        localStorage.setItem('selectedStudent', JSON.stringify(student));
-        //this.router.navigate(['/tabs/tab-1/dashboard'], { replaceUrl: true });
-        this.navCtrl.navigateBack('/tabs/tab-1/dashboard');
-      }, 2000);
+      this.apiService
+        .deleteStudent(body)
+        .pipe(
+          this.unsubscribe.takeUntilDestroy,
+          finalize(() => this.loadingService.dismiss())
+        )
+        .subscribe({
+          next: async (result) => {
+            let keys = Object.keys(result[0]);
+            if (keys.includes('Status') && result[0]['Status'] === 'Deleted') {
+              let text = await firstValueFrom(
+                this.tr.get('homePage.labels.deleted')
+              );
+              toast.success(text);
+              this.getStudentDetails({
+                User_Name: localStorage.getItem('User_Name')!,
+                Password: localStorage.getItem('Password')!,
+              });
+            } else {
+              let text = await firstValueFrom(
+                this.tr.get('homePage.errors.failedToDeleteStudent')
+              );
+              toast.error(text);
+            }
+            this.loadingService.dismiss();
+          },
+          error: (err) => {
+            this.loadingService.dismiss();
+          },
+        });
     });
   }
   async removeStudent(event: any, student: GetSDetailStudents) {
-    const deleteStudent = (body: FDeleteStudent) => {
-      this.loadingService.startLoading().then((loading) => {
-        this.apiService
-          .deleteStudent(body)
-          .pipe(
-            this.unsubscribe.takeUntilDestroy,
-            finalize(() => this.loadingService.dismiss())
-          )
-          .subscribe({
-            next: async (result) => {
-              let keys = Object.keys(result[0]);
-              if (
-                keys.includes('Status') &&
-                result[0]['Status'] === 'Deleted'
-              ) {
-                let text = await firstValueFrom(
-                  this.tr.get('homePage.labels.deleted')
-                );
-                toast.success(text);
-                this.getStudentDetails({
-                  User_Name: localStorage.getItem('User_Name')!,
-                  Password: localStorage.getItem('Password')!,
-                });
-              } else {
-                let text = await firstValueFrom(
-                  this.tr.get('homePage.errors.failedToDeleteStudent')
-                );
-                toast.error(text);
-              }
-              this.loadingService.dismiss();
-            },
-          });
-      });
+    const removeConfirmed = (
+      dialogRef: MatDialogRef<ConfirmMessageBoxComponent, any>
+    ) => {
+      const payload$ = dialogRef.componentInstance.confirmed
+        .asObservable()
+        .pipe(
+          map(() => {
+            return {
+              Facility_Reg_Sno: student.Facility_Reg_Sno,
+              User_Name: student.User_Name,
+              Admission_No: student.Admission_No,
+              Reason_Del: 'Parent Deleted Account',
+            } as FDeleteStudent;
+          })
+        );
+      payload$
+        .pipe(this.unsubscribe.takeUntilDestroy)
+        .subscribe((body) => this.requestRemoveStudent(body));
     };
-    let title = await firstValueFrom(
-      this.tr.get('homePage.labels.deleteStudent')
+
+    const dialogRef$ = this.appConfig.openConfirmMessageBox(
+      'homePage.labels.deleteStudent',
+      'homePage.warnings.cantBeUndone'
     );
-    let message = await firstValueFrom(
-      this.tr.get('homePage.warnings.cantBeUndone')
-    );
-    let dialogRef = this.appConfig.openConfirmMessageBox(title, message);
-    dialogRef.componentInstance.confirmed.asObservable().subscribe({
-      next: (res) => {
-        let body: FDeleteStudent = {
-          Facility_Reg_Sno: student.Facility_Reg_Sno,
-          User_Name: student.User_Name,
-          Admission_No: student.Admission_No,
-          Reason_Del: 'Parent Deleted Account',
-        };
-        deleteStudent(body);
-      },
+    dialogRef$.subscribe({
+      next: (dialogRef) => removeConfirmed(dialogRef),
     });
   }
   logOutClicked(event: any) {

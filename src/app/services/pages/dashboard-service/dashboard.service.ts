@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, finalize, Observable, of, zip } from 'rxjs';
+import {
+  BehaviorSubject,
+  finalize,
+  from,
+  merge,
+  mergeAll,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  zip,
+} from 'rxjs';
 import { UnsubscriberService } from '../../unsubscriber/unsubscriber.service';
 import { UsersManagementService } from '../../users-management/users-management.service';
 import { AppConfigService } from '../../app-config/app-config.service';
@@ -20,9 +31,6 @@ import { LoadingService } from '../../loading-service/loading.service';
 export class DashboardService {
   overallAttendance$ = new BehaviorSubject<OverallAttendance[]>([]);
   pendingStudentInvoices$ = new BehaviorSubject<StudentPendingInvoice[]>([]);
-  // selectedStudent: GetSDetailStudents = JSON.parse(
-  //   localStorage.getItem('selectedStudent')!
-  // );
   selectedStudent!: GetSDetailStudents;
   constructor(
     private tr: TranslateService,
@@ -39,38 +47,28 @@ export class DashboardService {
     let body: StudentDetailsForm = {
       Facility_Reg_Sno: this.selectedStudent.Facility_Reg_Sno.toString(),
       Admission_No: this.selectedStudent.Admission_No,
-      From_Date: undefined,
-      To_Date: undefined,
     };
     this.loadingService.startLoading().then((loading) => {
       let attendanceObs = this.apiService.getAttendance(body);
       let invoicesObs = this.apiService.getStudentPendingInvoices(body);
-      let merged = zip(attendanceObs, invoicesObs);
-      merged
+      attendanceObs
         .pipe(
           this._unsubscriber.takeUntilDestroy,
+          tap((value) => this.overallAttendance$.next(value)),
+          switchMap((value) => invoicesObs),
+          tap((value) => this.pendingStudentInvoices$.next(value)),
           finalize(() => this.loadingService.dismiss())
         )
-        .subscribe({
-          next: (results) => {
-            let [attendance, invoices] = results;
-            this.overallAttendance$.next(attendance);
-            this.pendingStudentInvoices$.next(invoices);
-          },
-          error: (err) => {
-            console.log('error happened here');
-          },
-        });
+        .subscribe({ next: (res) => {}, error: (err) => {} });
     });
   }
   logUserOut() {
-    let msg1Obs = this.tr.get('defaults.confirm');
-    let msg2Obs = this.tr.get('defaults.dialogs.sureLogoutText');
-    let merged = zip(msg1Obs, msg2Obs);
-    merged.pipe(this._unsubscriber.takeUntilDestroy).subscribe({
-      next: (results) => {
-        let [msg1, msg2] = results;
-        let dialogRef = this.appConfig.openConfirmMessageBox(msg1, msg2);
+    const dialogRef$ = this.appConfig.openConfirmMessageBox(
+      'defaults.confirm',
+      'defaults.dialogs.sureLogoutText'
+    );
+    dialogRef$.subscribe({
+      next: (dialogRef) => {
         dialogRef.componentInstance.confirmed
           .asObservable()
           .pipe(this._unsubscriber.takeUntilDestroy)

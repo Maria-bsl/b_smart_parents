@@ -23,6 +23,11 @@
     #swipeContainer
     class="px-3 py-3 h-20 duration-200 transition-[height] absolute left-0 right-0 bottom-0 w-full bg-white rounded-tl-3xl rounded-tr-3xl"
   >
+    <ng-template #loading>
+      <div class="w-full h-[320px] grid place-items-center">
+        <span class="loading loading-ring loading-lg"></span>
+      </div>
+    </ng-template>
     <div class="flex flex-col">
       <div #swipeDiv class="flex flex-col w-full">
         <div class="w-full grid place-items-center">
@@ -42,7 +47,8 @@
         [@inOutAnimation]
         *ngIf="
           swipeContainer.classList.contains('h-[340px]') &&
-          (vehicleDetails$ | async) as vehicleDetails
+            (vehicleDetails$ | async) as vehicleDetails;
+          else loading
         "
         class="flex flex-col py-2"
       >

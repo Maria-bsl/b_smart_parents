@@ -7,6 +7,7 @@ import {
   IonButtons,
   IonContent,
   IonTitle,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { GetSDetailStudents } from 'src/app/core/interfaces/GetSDetails';
@@ -25,7 +26,7 @@ import { AppConfigService } from 'src/app/services/app-config/app-config.service
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { finalize, Observable, zip } from 'rxjs';
+import { finalize, Observable, of, tap, zip } from 'rxjs';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { UsersManagementService } from 'src/app/services/users-management/users-management.service';
 import { DashboardModule } from 'src/app/core/types/dashboard-module';
@@ -35,6 +36,7 @@ import { ApiConfigService } from 'src/app/services/api-config/api-config.service
 import { LoadingService } from 'src/app/services/loading-service/loading.service';
 import { OverallAttendance } from 'src/app/core/types/attendance';
 import { StudentPendingInvoice } from 'src/app/core/types/student-invoices';
+import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -66,12 +68,11 @@ export class DashboardPageComponent implements OnInit {
     this.dashboardService.pendingStudentInvoices$.asObservable();
   constructor(
     private appConfig: AppConfigService,
-    private router: Router,
-    private apiService: ApiConfigService,
-    private loadingService: LoadingService,
+    private navCtrl: NavController,
     public dashboardService: DashboardService
   ) {
     this.registerIcons();
+    this.dashboardService.initDashboard();
   }
   private registerIcons() {
     this.appConfig.addIcons(['book-open'], `/assets/feather`);
@@ -102,16 +103,40 @@ export class DashboardPageComponent implements OnInit {
       `/assets/figma`
     );
   }
-  ngOnInit() {
-    this.dashboardService.initDashboard();
-  }
-  ionViewDidLoad() {
-    this.dashboardService.initDashboard();
-  }
+  ngOnInit() {}
   navigateToHomeScreen() {
-    this.router.navigateByUrl('/home', { replaceUrl: true });
+    //this.router.navigateByUrl('/home', { replaceUrl: true });
+    //this.navCtrl.navigateBack('/home', { replaceUrl: true });
+    this.navCtrl.navigateRoot('/home');
   }
   logoutClicked(event: any) {
     this.dashboardService.logUserOut();
   }
 }
+
+// import { CommonModule } from '@angular/common';
+// import { Component, OnInit } from '@angular/core';
+// import { MatToolbarModule } from '@angular/material/toolbar';
+// import { IonContent, IonTitle } from '@ionic/angular/standalone';
+// import { DashboardService } from 'src/app/services/pages/dashboard-service/dashboard.service';
+// import { MatChipsModule } from '@angular/material/chips';
+
+// @Component({
+//   selector: 'app-dashboard-page',
+//   templateUrl: './dashboard-page.component.html',
+//   styleUrls: ['./dashboard-page.component.scss'],
+//   standalone: true,
+//   imports: [
+//     CommonModule,
+//     IonTitle,
+//     IonContent,
+//     MatToolbarModule,
+//     MatChipsModule,
+//   ],
+// })
+// export class DashboardPageComponent implements OnInit {
+//   constructor(public dashboardService: DashboardService) {}
+//   ngOnInit(): void {
+//     this.dashboardService.initDashboard();
+//   }
+// }

@@ -11,6 +11,7 @@ import {
   Observable,
   of,
   Subject,
+  switchMap,
   tap,
   throwError,
   zip,
@@ -26,18 +27,25 @@ import {
   GetSDetails,
   GetSDetailsErrorStatus,
 } from 'src/app/core/interfaces/GetSDetails';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavController } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersManagementService {
+  // studentDetails = signal<GetSDetails>(
+  //   JSON.parse(localStorage.getItem('GetSDetails')!)
+  // );
+  studentDetails$ = new Subject<GetSDetails>();
   constructor(
     private apiService: ApiConfigService,
     private appConfigService: AppConfigService,
     private _unsubscribe: UnsubscriberService,
     private router: Router,
     private tr: TranslateService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private navCtrl: NavController
   ) {}
   private displayFailedToLoginError() {
     let failedMessageObs = 'defaults.failed';
@@ -209,7 +217,8 @@ export class UsersManagementService {
               localStorage.setItem('GetSDetails', GetSDetails);
               localStorage.setItem('User_Name', body.User_Name);
               localStorage.setItem('Password', body.Password);
-              this.router.navigate(['/home']);
+              this.navCtrl.navigateForward(['/home']);
+              //this.router.navigate(['/home']);
             }
           },
           error: (err) => {
@@ -218,33 +227,82 @@ export class UsersManagementService {
         });
     });
   }
+  initToken() {
+    this.loadingService
+      .startLoading()
+      .then((loading) => {
+        this.apiService
+          .getToken()
+          .pipe(
+            this._unsubscribe.takeUntilDestroy,
+            tap({
+              next: (res) => {
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('expire_time', res.expire_time);
+                localStorage.setItem(
+                  'expire_timestamp',
+                  new Date().toISOString()
+                );
+              },
+            }),
+            finalize(() => this.loadingService.dismiss())
+          )
+          .subscribe();
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
   requestToken(body: FLoginForm) {
     this.loadingService.startLoading().then((loading) => {
       this.apiService
         .requestToken(body)
         .pipe(
           this._unsubscribe.takeUntilDestroy,
-          finalize(() => this.loadingService.dismiss())
+          tap({
+            next: (res) => {
+              localStorage.setItem('token', res.token);
+              localStorage.setItem('expire_time', res.expire_time);
+              localStorage.setItem(
+                'expire_timestamp',
+                new Date().toISOString()
+              );
+            },
+          }),
+          switchMap((res: any) =>
+            this.apiService
+              .signIn(body)
+              .pipe(finalize(() => this.loadingService.dismiss()))
+          )
         )
         .subscribe({
-          next: (res: any) => {
-            localStorage.setItem('token', res.token);
-            localStorage.setItem('expire_time', res.expire_time);
-            this.loginUser(body);
+          next: (res) => {
+            if (Object.prototype.hasOwnProperty.call(res[0], 'status')) {
+              let failedMessageObs = 'defaults.failed';
+              let incorrectUsernamePasswordMessageObs =
+                'loginPage.loginForm.messageBox.errors.usernamePasswordIncorrect';
+              this.appConfigService.openAlertMessageBox(
+                failedMessageObs,
+                incorrectUsernamePasswordMessageObs
+              );
+            } else {
+              let GetSDetails = JSON.stringify(res[0]);
+              localStorage.setItem('GetSDetails', GetSDetails);
+              localStorage.setItem('User_Name', body.User_Name);
+              localStorage.setItem('Password', body.Password);
+              this.router.navigate(['/home']);
+            }
           },
           error: (err) => {
+            this.loadingService.dismiss();
             this.displayFailedToLoginError();
           },
         });
     });
   }
   logOutUser() {
-    this.loadingService.startLoading().then((loading) => {
-      setTimeout(() => {
-        this.loadingService.dismiss();
-        localStorage.clear();
-        this.router.navigate(['/login']);
-      }, 1500);
-    });
+    this.loadingService.dismiss();
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 }

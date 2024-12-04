@@ -7,11 +7,17 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ConfirmMessageBoxComponent } from 'src/app/components/dialogs/confirm-message-box/confirm-message-box.component';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, zip } from 'rxjs';
+import { endWith, firstValueFrom, map, of, switchMap, tap, zip } from 'rxjs';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { isPlatform } from '@ionic/angular/standalone';
 import { LoadingService } from '../loading-service/loading.service';
+
+export interface SessionTokens {
+  token: string | null | undefined;
+  expire_time: string | null | undefined;
+  expire_timestamp: string | null | undefined;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -49,12 +55,24 @@ export class AppConfigService {
     });
   }
   openConfirmMessageBox(title: string, message: string) {
-    return this.dialog.open(ConfirmMessageBoxComponent, {
-      data: {
-        title: title,
-        message: message,
-      },
-    });
+    const confirm = (msg1: string, msg2: string) => {
+      return this.dialog.open(ConfirmMessageBoxComponent, {
+        data: {
+          title: msg1,
+          message: msg2,
+        },
+      });
+    };
+    let titleObs = this.tr.get(title);
+    let messageObs = this.tr.get(message);
+    let merged = zip(titleObs, messageObs);
+    return merged.pipe(
+      this.unsubscribe.takeUntilDestroy,
+      switchMap((data) => {
+        let [msg1, msg2] = data;
+        return of(confirm(msg1, msg2));
+      })
+    );
   }
   navigateBack() {
     this.location.back();
@@ -67,8 +85,17 @@ export class AppConfigService {
       );
     });
   }
-  getToken() {
-    return localStorage.getItem('token');
+  getSessionTokens(): SessionTokens {
+    return {
+      token: localStorage.getItem('token'),
+      expire_time: localStorage.getItem('expire_time'),
+      expire_timestamp: localStorage.getItem('expire_timestamp'),
+    };
+  }
+  setSessionTokens(res: any) {
+    localStorage.setItem('token', res.token);
+    localStorage.setItem('expire_time', res.expire_time);
+    localStorage.setItem('expire_timestamp', new Date().toISOString());
   }
   getCssVariable(variableName: string): string {
     // Access the root element

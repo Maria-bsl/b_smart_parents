@@ -8,6 +8,7 @@ import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import {
   catchError,
   concatMap,
+  delay,
   from,
   map,
   Observable,
@@ -35,71 +36,67 @@ import {
   StudentInvoice,
   StudentPendingInvoice,
 } from 'src/app/core/types/student-invoices';
-import { AttendanceScore } from 'src/app/core/types/attendance';
+import {
+  AttendanceScore,
+  OverallAttendance,
+} from 'src/app/core/types/attendance';
 import { VehicleDetail } from 'src/app/core/interfaces/transports';
 import { IPackage } from 'src/app/core/interfaces/packages';
 import {
   GetSDetails,
   GetSDetailsErrorStatus,
 } from 'src/app/core/interfaces/GetSDetails';
+import { Router } from '@angular/router';
+import { AppConfigService } from '../app-config/app-config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiConfigService {
-  //private baseUrl = environment.nmbTokenBaseUrl;
-  private baseUrl = 'http://183.83.33.156:85/api';
+  private baseUrl = environment.nmbTokenBaseUrl;
+  //private baseUrl = 'http://183.83.33.156:85/api';
   constructor(
     private http: HttpClient,
-    private _unsubscribe: UnsubscriberService
+    private _unsubscribe: UnsubscriberService,
+    private router: Router,
+    private appConfig: AppConfigService
   ) {}
-  private handleError(err: HttpErrorResponse) {
-    switch (err.status) {
-      case ErrorStatusCode.NOT_FOUND:
-        return throwError(() => new ErrorResponse(err.message, err.statusText));
-      case ErrorStatusCode.BAD_REQUEST:
-        return throwError(() => new ErrorResponse(err.message, err.statusText));
-      case ErrorStatusCode.INTERNAL_SERVER_ERROR:
-        return throwError(() => new ErrorResponse(err.message, err.statusText));
-      case ErrorStatusCode.SUCCESS:
-        return throwError(() => new ErrorResponse(err.message, err.statusText));
-      default:
-        return throwError(() => new ErrorResponse('No internet error'));
+  private handleError(err: any) {
+    let msg = 'Invalid Token or Token expired';
+    if (
+      err.error &&
+      err.error.StatusCode === 649 &&
+      err.error.Message === msg
+    ) {
+      this.appConfig.openAlertMessageBox(
+        'defaults.sessionExpired',
+        'defaults.sessionExpiredMessage'
+      );
+      localStorage.clear();
+      this.router.navigate(['/login']);
     }
   }
   private performPost<T>(url: string, body: T, headers: any) {
-    // return this.http.post(url, body, { headers: headers }).pipe(
-    //   this._unsubscribe.takeUntilDestroy,
-    //   retry(3),
-    //   catchError((err: HttpErrorResponse) => {
-    //     return this.handleError(err);
-    //   })
-    // ) as Observable<any>;
-    AbortSignal.timeout ??= function timeout(ms) {
-      const ctrl = new AbortController();
-      setTimeout(() => ctrl.abort(), ms);
-      return ctrl.signal;
+    const createHeaders = (headers: Map<string, string>) => {
+      let heads = new HttpHeaders();
+      for (let [key, value] of Object.entries(headers)) {
+        heads = heads.set(key, value);
+      }
+      return heads;
     };
-    let promise = fetch(url, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: AbortSignal.timeout(30000),
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        return res.json();
+
+    return this.http
+      .post(url, body, {
+        headers: createHeaders(headers),
       })
-      .catch((err) => {
-        throw err;
-      });
-    return from(promise).pipe(
-      retry(3),
-      catchError((err) => {
-        throw err;
-      })
-    );
+      .pipe(
+        retry(3),
+        delay(1000),
+        catchError((err: any) => {
+          this.handleError(err);
+          throw err;
+        })
+      ) as Observable<any>;
   }
   signIn(
     body: FLoginForm
@@ -124,7 +121,7 @@ export class ApiConfigService {
       {}
     );
   }
-  getAttendance(body: StudentDetailsForm) {
+  getAttendance(body: StudentDetailsForm): Observable<OverallAttendance[]> {
     return this.performPost(
       `
       ${this.baseUrl}/SchoolDetails/GetAttendance
@@ -133,7 +130,9 @@ export class ApiConfigService {
       {}
     );
   }
-  getStudentPendingInvoices(body: StudentDetailsForm) {
+  getStudentPendingInvoices(
+    body: StudentDetailsForm
+  ): Observable<StudentPendingInvoice[]> {
     return this.performPost(
       `
       ${this.baseUrl}/SchoolDetails/GetStudentPendingInvoices
@@ -170,7 +169,7 @@ export class ApiConfigService {
       {}
     );
   }
-  getStudentInvoices(body: StudentDetailsForm) {
+  getStudentInvoices(body: StudentDetailsForm): Observable<StudentInvoice[]> {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetStudentInvoices`,
       body,
@@ -251,18 +250,20 @@ export class ApiConfigService {
     );
   }
   requestToken(body: FLoginForm) {
+    return this.getToken();
+  }
+  getToken() {
     let { username, password } = {
       username: 'Nmb001user',
       password: 'NMB@378139',
     };
-    let headers = new HttpHeaders();
     let basicAuth = btoa(`${username}:${password}`);
-    const map = {
+    const headers = {
       Authorization: `Basic ${basicAuth}`,
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': '*',
+      'Content-Type': 'application/json',
     } as any;
-    Object.keys(map).forEach((key) => (headers = headers.set(key, map[key])));
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetToken`,
       {},

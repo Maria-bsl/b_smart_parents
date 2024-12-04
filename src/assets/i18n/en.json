@@ -8,6 +8,8 @@
     "yes": "Yes",
     "no": "No",
     "success": "Success",
+    "sessionExpiredMessage": "Session expired. You've been logged out. Please log in again.",
+    "sessionExpired": "Session Expired",
     "labels": {
       "from": "From",
       "to": "To",
@@ -23,7 +25,8 @@
     "errors": {
       "invalidForm": "Invalid form",
       "notAvailableText": "Not Available",
-      "somethingWentWrongTryAgain": "Something went wrong! Please try again later or contact support."
+      "somethingWentWrongTryAgain": "Something went wrong! Please try again later or contact support.",
+      "requestTookTooLong": "Your request took too long. Verify your internet connection and try again."
     }
   },
   "registerPage": {
