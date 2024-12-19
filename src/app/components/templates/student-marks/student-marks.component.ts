@@ -11,7 +11,7 @@ import { IonText, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { FStudentMarksForm } from 'src/app/core/forms/f-student-marks-form';
-import { finalize, firstValueFrom, lastValueFrom, Observable } from 'rxjs';
+import { finalize, firstValueFrom, lastValueFrom, Observable, zip } from 'rxjs';
 import {
   IStudentMarks,
   IStudentMarksDetail,
@@ -32,6 +32,11 @@ import jsPDF from 'jspdf';
 import { LoadingService } from 'src/app/services/loading-service/loading.service';
 import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
 import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  FileOpener,
+  FileOpenerOptions,
+} from '@capacitor-community/file-opener';
 
 @Component({
   selector: 'app-student-marks',
@@ -67,7 +72,8 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
     private jsPdfService: JspdfUtilsService,
     private apiService: ApiConfigService,
     private tr: TranslateService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private _snackBar: MatSnackBar
   ) {
     addIcons({ downloadOutline });
   }
@@ -90,7 +96,7 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
     };
     return form;
   }
-  private writeAndDownloadReport(
+  private async writeAndDownloadReport(
     studentName: string,
     labels: string[],
     element: any
@@ -102,8 +108,44 @@ export class StudentMarksComponent implements AfterViewInit, OnInit {
         'mm',
         [element.clientWidth, element.clientHeight]
       );
-      this.jsPdfService.exportJsPdfToPdf(doc, element, 'result');
+      await this.jsPdfService.exportJsPdfToPdf(
+        doc,
+        element,
+        `${studentName}_marks`.concat('-')
+      );
       this.loadingService.dismiss();
+      let downloadedMessage = this.tr.get('defaults.labels.fileDownloaded');
+      let viewMessage = this.tr.get('defaults.view');
+      let merged = zip(downloadedMessage, viewMessage);
+      merged.pipe(this.unsubscribe.takeUntilDestroy).subscribe({
+        next: (messages) => {
+          let [msg1, msg2] = messages;
+          let snackbar = this._snackBar.open(msg1, msg2, { duration: 5000 });
+          snackbar
+            .onAction()
+            .pipe(this.unsubscribe.takeUntilDestroy)
+            .subscribe({
+              next: (res) => {
+                let uri$ = this.jsPdfService.getFileUri(
+                  `${studentName}_marks`.concat('-')
+                );
+                uri$.pipe(this.unsubscribe.takeUntilDestroy).subscribe({
+                  next: (file) => {
+                    const fileOpenerOptions: FileOpenerOptions = {
+                      filePath: file.uri,
+                      contentType: 'application/pdf',
+                      openWithDefault: true,
+                    };
+                    FileOpener.open(fileOpenerOptions);
+                  },
+                  error: (err) => console.error(`Failed to get file uri`, err),
+                });
+              },
+              error: (err) => console.error(err),
+            });
+        },
+        error: (err) => console.error(err),
+      });
     });
   }
   ngOnInit() {

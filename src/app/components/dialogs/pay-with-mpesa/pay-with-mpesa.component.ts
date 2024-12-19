@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogClose,
@@ -51,7 +51,7 @@ import { inOutAnimation } from 'src/app/core/shared/fade-in-out-animation';
   ],
   animations: [inOutAnimation],
 })
-export class PayWithMpesaComponent implements OnInit {
+export class PayWithMpesaComponent implements OnInit, OnDestroy {
   payFormGroup!: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -96,9 +96,6 @@ export class PayWithMpesaComponent implements OnInit {
   }
   async submitPayWithMpesaForm(event: any) {
     if (this.payFormGroup.valid) {
-      let subscription = await firstValueFrom(
-        this.tr.get('subscriptionPage.labels.subscription')
-      );
       this.input_PurchasedItemsDesc.setValue(this.data.description);
       this.input_ThirdPartyConversationID.setValue(v4().replaceAll('-', ''));
       const entries = new Map(
@@ -114,6 +111,9 @@ export class PayWithMpesaComponent implements OnInit {
     } else {
       this.payFormGroup.markAllAsTouched();
     }
+  }
+  ngOnDestroy(): void {
+    this.mpesaService.isLoading.set(false);
   }
   get input_Amount() {
     return this.payFormGroup.get('input_Amount') as FormControl;

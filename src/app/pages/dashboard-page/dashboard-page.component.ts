@@ -69,7 +69,10 @@ export class DashboardPageComponent implements OnInit {
   constructor(
     private appConfig: AppConfigService,
     private navCtrl: NavController,
-    public dashboardService: DashboardService
+    public dashboardService: DashboardService,
+    private loadingService: LoadingService,
+    private apiService: ApiConfigService,
+    private unsubscribe: UnsubscriberService
   ) {
     this.registerIcons();
     this.dashboardService.initDashboard();
@@ -95,6 +98,8 @@ export class DashboardPageComponent implements OnInit {
         'headset',
         'box-arrow-right',
         'door-open-fill',
+        'bookshelf',
+        'people-fill',
       ],
       `/assets/bootstrap-icons`
     );
@@ -104,6 +109,33 @@ export class DashboardPageComponent implements OnInit {
     );
   }
   ngOnInit() {}
+  requestEventDetails(event: MouseEvent) {
+    this.loadingService
+      .startLoading()
+      .then((loading) => {
+        let body = {
+          Facility_Reg_Sno:
+            this.dashboardService.selectedStudent.Facility_Reg_Sno,
+          Admission_No: this.dashboardService.selectedStudent.Admission_No,
+        };
+        this.apiService
+          .getEventList(body)
+          .pipe(
+            this.unsubscribe.takeUntilDestroy,
+            finalize(() => this.loadingService.dismiss())
+          )
+          .subscribe({
+            next: (res) => {
+              this.appConfig.openAlertMessageBox(
+                'defaults.info',
+                res[0].Status
+              );
+            },
+            error: (err) => console.error('Failed to fetch event details', err),
+          });
+      })
+      .catch((err) => console.error(err));
+  }
   navigateToHomeScreen() {
     this.navCtrl.navigateRoot('/home');
   }

@@ -39,7 +39,7 @@ import {
   AttendanceScore,
   OverallAttendance,
 } from 'src/app/core/types/attendance';
-import { VehicleDetail } from 'src/app/core/interfaces/transports';
+import { RouteDetail, VehicleDetail } from 'src/app/core/interfaces/transports';
 import { IPackage } from 'src/app/core/interfaces/packages';
 import {
   GetSDetails,
@@ -48,6 +48,9 @@ import {
 import { Router } from '@angular/router';
 import { AppConfigService } from '../app-config/app-config.service';
 import { isPlatform } from '@ionic/angular/standalone';
+import { ISubject, ISubjectBook } from 'src/app/core/interfaces/isubjects';
+import { IParentDetail } from 'src/app/core/interfaces/parent-details';
+import { IUpdateParentReg } from 'src/app/core/forms/f-update-parent-reg';
 
 @Injectable({
   providedIn: 'root',
@@ -90,8 +93,8 @@ export class ApiConfigService {
         headers: createHeaders(headers),
       })
       .pipe(
+        delay(500),
         retry(3),
-        delay(1000),
         catchError((err: any) => {
           this.handleError(err);
           throw err;
@@ -137,7 +140,7 @@ export class ApiConfigService {
       {}
     );
   }
-  getParentDetails(body: { User_Name: string }) {
+  getParentDetails(body: { User_Name: string }): Observable<IParentDetail[]> {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetParentDet`,
       body,
@@ -217,6 +220,16 @@ export class ApiConfigService {
   getRoute(body: StudentDetailsForm): Observable<VehicleDetail[]> {
     return this.performPost(`${this.baseUrl}/SchoolDetails/GetRoute`, body, {});
   }
+  getRouteDetails(body: {
+    Facility_Reg_Sno: number | string;
+    Route_ID: string;
+  }): Observable<RouteDetail[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetRouteDetails`,
+      body,
+      {}
+    );
+  }
   getBooksReturned(body: FBookForm) {
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetR_Books`,
@@ -245,6 +258,42 @@ export class ApiConfigService {
       {}
     );
   }
+  sendForgotPasswordLink(body: { Email_Address: string }) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/ForgotPassword`,
+      body,
+      {}
+    );
+  }
+  getBooksList(body: {
+    Facility_Reg_Sno: number | string;
+  }): Observable<ISubject[]> {
+    return this.performPost(`${this.baseUrl}/SchoolDetails/GetBooks`, body, {});
+  }
+  getBookDetailsList(body: {
+    Facility_Reg_Sno: number | string;
+    Subject_Sno: number | string;
+  }): Observable<ISubjectBook[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetBooksDetails`,
+      body,
+      {}
+    );
+  }
+  getUpdateParentDetail(body: IUpdateParentReg): Observable<IParentDetail[]> {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/UpdateParentReg`,
+      body,
+      {}
+    );
+  }
+  getEventList(body: StudentDetailsForm) {
+    return this.performPost(
+      `${this.baseUrl}/SchoolDetails/GetEventDetails`,
+      body,
+      {}
+    );
+  }
   requestToken(body: FLoginForm) {
     return this.getToken();
   }
@@ -255,10 +304,8 @@ export class ApiConfigService {
     };
     let basicAuth = btoa(`${username}:${password}`);
     const headers = {
-      Authorization: `Basic ${basicAuth}`,
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': '*',
       'Content-Type': 'application/json',
+      Authorization: `Basic ${basicAuth}`,
     } as any;
     return this.performPost(
       `${this.baseUrl}/SchoolDetails/GetToken`,

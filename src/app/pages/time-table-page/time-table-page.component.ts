@@ -16,6 +16,7 @@ import {
   IonBackButton,
   IonButton,
   IonIcon,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,6 +44,7 @@ import {
   BreakScheduleTypePipe,
 } from 'src/app/core/pipes/time-table/time-table.pipe';
 import { AppUtilities } from 'src/app/core/utils/AppUtilities';
+import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 
 @Component({
   selector: 'app-time-table-page',
@@ -82,22 +84,23 @@ export class TimeTablePageComponent implements OnInit {
   );
   timeTableFormGroup!: FormGroup;
   timeTable$ = this.studentsService.timeTable$.asObservable();
-  // timeTable$ = this.studentsService.timeTable$.pipe(
-  //   map((timeTable: GetTimeTable) => ({
-  //     ...timeTable,
-  //     Monday: this.mapToScheduleInstances(timeTable.Monday),
-  //     Tuesday: this.mapToScheduleInstances(timeTable.Tuesday),
-  //     Wednesday: this.mapToScheduleInstances(timeTable.Wednesday),
-  //     Thursday: this.mapToScheduleInstances(timeTable.Thursday),
-  //     Friday: this.mapToScheduleInstances(timeTable.Friday),
-  //     Saturday: this.mapToScheduleInstances(timeTable.Saturday),
-  //   }))
-  // );
   constructor(
     private fb: FormBuilder,
     private studentsService: StudentsManagementService,
-    private unsubscribe: UnsubscriberService
-  ) {}
+    private unsubscribe: UnsubscriberService,
+    private _appConfig: AppConfigService,
+    private navCtrl: NavController
+  ) {
+    this.createTimeTaleFormGroup();
+    this.backButtonHandler();
+    this.timeTableFormGroup.valueChanges.subscribe({
+      next: (form) => this.submitTimeTableForm(),
+    });
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
+  }
   private mapToScheduleInstances(daySchedule: Schedule[] | null): Schedule[] {
     return daySchedule
       ? daySchedule.map((schedule) => {
@@ -142,7 +145,6 @@ export class TimeTablePageComponent implements OnInit {
   }
   ngOnInit() {
     if (!this.selectedStudent) throw Error('Failed to find selected student.');
-    this.createTimeTaleFormGroup();
     this.studentsService.requestTimeTable(this.timeTableFormGroup.value);
   }
   submitTimeTableForm() {

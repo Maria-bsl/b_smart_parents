@@ -9,6 +9,7 @@ import {
   IonHeader,
   IonButtons,
   IonTitle,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
@@ -69,10 +70,16 @@ import { MatDividerModule } from '@angular/material/divider';
 })
 export class AddStudentPageComponent implements OnInit {
   constructor(
-    private appConfig: AppConfigService,
-    public studentDetailsFormService: StudentDetailsFormService
-  ) {}
-  ngOnInit(): void {}
+    private _appConfig: AppConfigService,
+    public studentDetailsFormService: StudentDetailsFormService,
+    private navCtrl: NavController
+  ) {
+    const backToHome = () => this.navCtrl.navigateRoot('/home');
+    this._appConfig.backButtonEventHandler(backToHome);
+  }
+  ngOnInit(): void {
+    this.studentDetailsFormService.requestFacultiesList();
+  }
   submitStudentForm(event: any) {
     this.studentDetailsFormService.submitForm();
   }

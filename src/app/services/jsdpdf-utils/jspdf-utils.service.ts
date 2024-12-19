@@ -1,18 +1,49 @@
 import { Injectable } from '@angular/core';
-//import html2canvas from 'html2canvas';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
+import {
+  Filesystem as CapFileSystem,
+  Directory as CapDirectory,
+  Encoding as CapEncoding,
+  Directory,
+} from '@capacitor/filesystem';
+import { BehaviorSubject, from, fromEvent } from 'rxjs';
+import { isPlatform } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',
 })
 export class JspdfUtilsService {
+  finished$ = new BehaviorSubject<boolean>(false);
   constructor() {}
   private calculatePdfTextWidth(text: string, doc: jsPDF) {
     let width =
       (doc.getStringUnitWidth(text) * doc.getFontSize()) /
       doc.internal.scaleFactor;
     return width;
+  }
+  private writeBlobToFileSystem(blob: Blob, filename: string) {
+    let reader = new FileReader();
+    let p = new Promise((reject, resolve) => {
+      reader.onloadend = async (readerEvent) => {
+        if (reader.error) console.log(reader.error);
+        else {
+          let base64Data: any = readerEvent.target!['result'];
+          try {
+            await CapFileSystem.writeFile({
+              path: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
+              data: base64Data,
+              directory: CapDirectory.Documents,
+            });
+            this.finished$.next(true);
+          } catch (e) {
+            console.error(`Unable to write file`, e);
+          }
+        }
+      };
+      reader.readAsDataURL(blob);
+    });
+    return p;
   }
   writePdfTitleText(doc: jsPDF, title: string) {
     doc.setFontSize(16);
@@ -80,7 +111,7 @@ export class JspdfUtilsService {
     doc.text(value, valueTextXPosition, positionY * 1.15, { align: 'right' });
     return [positionY, positionY * 1.15];
   }
-  exportHtmlToPdf(element: HTMLElement, width: number = 0, height: number = 0) {
+  exportHtmlToPdf(element: HTMLElement) {
     let doc = new jsPDF(
       element.clientWidth > element.clientHeight ? 'l' : 'p',
       'mm',
@@ -94,24 +125,46 @@ export class JspdfUtilsService {
   }
   exportJsPdfToPdf(doc: jsPDF, element: any, filename: string) {
     doc.html(element, {
-      callback(pdf) {
+      callback: (pdf) => {
         pdf.deletePage(pdf.getNumberOfPages());
-        pdf.save(filename.endsWith('.pdf') ? filename : `${filename}.pdf`);
+        if (isPlatform('capacitor')) {
+          this.writeBlobToFileSystem(pdf.output('blob'), filename);
+        } else {
+          filename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+          pdf.save(filename);
+        }
       },
     });
   }
-  exportHtml(element: HTMLElement) {
-    html2canvas(element).then((canvas) => {
-      const imgWidth = 208;
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const heightLeft = imgHeight;
-      const contentDataURL = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const position = 0;
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-      pdf.save('results');
-    });
+  exportHtml(element: HTMLElement, filename: string) {
+    html2canvas(element)
+      .then(async (canvas) => {
+        const imgWidth = element.clientWidth; //208;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const contentDataURL = canvas.toDataURL('image/png');
+        let pdf = new jsPDF(
+          element.clientWidth > element.clientHeight ? 'l' : 'p',
+          'mm',
+          [element.clientWidth, element.clientHeight]
+        );
+        const position = 0;
+        pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+        if (isPlatform('capacitor')) {
+          await this.writeBlobToFileSystem(pdf.output('blob'), filename);
+        } else {
+          pdf.save(filename.endsWith('.pdf') ? filename : `${filename}.pdf`);
+        }
+      })
+      .catch((err) => console.error('Failed to convert html to canvas', err));
+  }
+  getFileUri(filename: string) {
+    let getUri = from(
+      CapFileSystem.getUri({
+        path: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
+        directory: CapDirectory.Documents,
+      })
+    );
+    return getUri;
   }
   print(id: string, style?: string) {
     let popupWin: any, printContents: string;

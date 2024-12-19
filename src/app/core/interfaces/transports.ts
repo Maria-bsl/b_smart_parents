@@ -11,3 +11,10 @@ export interface VehicleDetail {
   Departure: string;
   Landmark: string;
 }
+
+export interface RouteDetail {
+  Area: string;
+  Arrival: string;
+  Departure: string;
+  Landmark: string;
+}

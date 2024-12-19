@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -28,6 +29,8 @@ import {
   IonContent,
   IonBackButton,
   IonButtons,
+  NavController,
+  Platform,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable, of, startWith, switchMap, zip } from 'rxjs';
@@ -43,6 +46,7 @@ import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.
 import { AppLauncher } from '@capacitor/app-launcher';
 import Swal from 'sweetalert2';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
@@ -68,15 +72,28 @@ import { AppConfigService } from 'src/app/services/app-config/app-config.service
     StudentDetailsFormComponent,
   ],
 })
-export class RegisterPageComponent implements OnInit, AfterViewInit {
+export class RegisterPageComponent implements OnInit, AfterViewInit, OnDestroy {
   isLinear: boolean = false;
   constructor(
     public registerPageService: RegisterPageService,
-    private appConfig: AppConfigService,
-    private tr: TranslateService
-  ) {}
+    private _appConfig: AppConfigService,
+    private tr: TranslateService,
+    private router: Router,
+    private navCtrl: NavController
+  ) {
+    this.init();
+    this.registerPageService.studentDetailsService.requestFacultiesList();
+  }
+  private init() {
+    const backToLogin = () => this.navCtrl.navigateRoot('/login');
+    this._appConfig.backButtonEventHandler(backToLogin);
+  }
   ngAfterViewInit(): void {}
   ngOnInit() {}
+  ngOnDestroy(): void {}
+  goBack() {
+    this.navCtrl.navigateRoot('/login');
+  }
   async submitRegisterForm(event: any) {
     this.registerPageService.submitForm();
   }

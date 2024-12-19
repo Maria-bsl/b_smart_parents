@@ -22,6 +22,42 @@
     <div
       class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
     >
+      <div class="w-full flex-row items-center justify-center my-8 hidden">
+        <mat-form-field>
+          <mat-label>Enter a date range</mat-label>
+          <mat-date-range-input
+            [formGroup]="timeTableFormGroup"
+            [rangePicker]="picker"
+          >
+            <input
+              matStartDate
+              [formControl]="From_Date"
+              placeholder="Start date"
+            />
+            <input matEndDate [formControl]="To_Date" placeholder="End date" />
+          </mat-date-range-input>
+          <mat-hint
+            >MM/DD/YYYY –
+            {{
+              (To_Date.value | date : "MM/dd/yyyy") &&
+              (To_Date.value | date : "MM/dd/yyyy")!.length > 0
+                ? (To_Date.value | date : "MM/dd/yyyy")
+                : "N/A"
+            }}</mat-hint
+          >
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+
+          @if (From_Date.hasError('matStartDateInvalid')) {
+          <mat-error>Invalid start date</mat-error>
+          } @if (To_Date.hasError('matEndDateInvalid')) {
+          <mat-error>Invalid end date</mat-error>
+          }
+        </mat-form-field>
+      </div>
       <mat-tab-group
         #tabGroup
         class="w-full custom-tab-density"

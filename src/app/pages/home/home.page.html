@@ -11,9 +11,15 @@
       <mat-toolbar
         class="flex flex-row items-center justify-between !bg-transparent w-full"
       >
-        <div class="flex flex-row items-center">
-          <ion-text class="!text-white mat-headline-large">
+        <div
+          [class]="parentDetails$ ? 'opacity-100' : 'opacity-0'"
+          class="duration-75 flex flex-col w-full"
+        >
+          <ion-text class="!text-white mat-title-large">
             {{ "homePage.labels.welcomeBackText" | translate }}
+          </ion-text>
+          <ion-text class="!text-white mat-title-small">
+            {{ (parentDetails$ | async)?.Parent_Name }}
           </ion-text>
         </div>
         <button

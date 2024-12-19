@@ -37,6 +37,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'forgot',
+    loadComponent: () =>
+      import(
+        './pages/forgot-password-page/forgot-password-page.component'
+      ).then((c) => c.ForgotPasswordPageComponent),
+  },
+  {
     path: 'tabs',
     loadChildren: () =>
       import('./pages/tabs/tabs.routes').then((t) => t.routes),

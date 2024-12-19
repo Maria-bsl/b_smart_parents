@@ -21,7 +21,7 @@ import jsPDF from 'jspdf';
   providedIn: 'root',
 })
 export class StudentsManagementService {
-  timeTable$ = new Subject<GetTimeTable>();
+  timeTable$ = new BehaviorSubject<GetTimeTable | null>(null);
   examTypes$ = new Subject<IExamType[]>();
   studentMarks$ = new BehaviorSubject<IStudentMarks | null>(null);
   studentMarksDetails$ = new BehaviorSubject<IStudentMarksDetail[] | null>([]);
@@ -143,20 +143,4 @@ export class StudentsManagementService {
         });
     });
   }
-  // downloadStudentMarksDetailsReport(
-  //   fullName: string,
-  //   labels: string[],
-  //   element: HTMLElement
-  // ) {
-  //   // let doc = new jsPDF(
-  //   //   element.clientWidth > element.clientHeight ? 'l' : 'p',
-  //   //   'mm',
-  //   //   [element.clientWidth, element.clientHeight]
-  //   // );
-  //   // doc.html(element, {
-  //   //   callback(doc) {
-  //   //     doc.save('results.pdf');
-  //   //   },
-  //   // });
-  // }
 }

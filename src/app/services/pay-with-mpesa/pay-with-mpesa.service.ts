@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, signal } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, signal } from '@angular/core';
 import {
   C2BMpesaPayment,
   C2BMpesaResponse,
@@ -13,7 +13,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppConfigService } from '../app-config/app-config.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { Http } from '@capacitor-community/http';
 import { isPlatform } from '@ionic/angular/standalone';
 import { CapacitorHttp } from '@capacitor/core';
 

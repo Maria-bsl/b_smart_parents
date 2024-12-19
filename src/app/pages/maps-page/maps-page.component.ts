@@ -11,6 +11,8 @@ import {
   IonContent,
   IonButtons,
   IonBackButton,
+  IonText,
+  NavController,
 } from '@ionic/angular/standalone';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { GoogleMap } from '@capacitor/google-maps';
@@ -28,8 +30,8 @@ import { inOutAnimation } from 'src/app/core/shared/fade-in-out-animation';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 import { FTimeTableForm as StudentDetailsForm } from 'src/app/core/forms/f-time-table-form';
 import { GetSDetailStudents } from 'src/app/core/interfaces/GetSDetails';
-import { finalize, Observable, of } from 'rxjs';
-import { VehicleDetail } from 'src/app/core/interfaces/transports';
+import { finalize, Observable, of, switchMap, tap } from 'rxjs';
+import { RouteDetail, VehicleDetail } from 'src/app/core/interfaces/transports';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -40,9 +42,9 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [
     CommonModule,
-    IonContent,
     IonButtons,
     IonBackButton,
+    IonText,
     MatToolbarModule,
     MatDividerModule,
     TranslateModule,
@@ -56,18 +58,29 @@ export class MapsPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('capacitorGoogleMap') capacitorGoogleMap!: ElementRef;
   @ViewChild('swipeDiv') swipeDiv!: ElementRef<HTMLDivElement>;
   @ViewChild('swipeContainer') swipeContainer!: ElementRef<HTMLDivElement>;
-  vehicleDetails$: Observable<VehicleDetail[]> = of([]);
+  vehicleDetails$!: Observable<VehicleDetail[]>;
+  routeDetail$!: Observable<RouteDetail[]>;
   newMap!: GoogleMap;
   selectedStudent: GetSDetailStudents = JSON.parse(
     localStorage.getItem('selectedStudent')!
   );
   constructor(
     private loadingService: LoadingService,
-    private appConfig: AppConfigService,
+    private _appConfig: AppConfigService,
     private apiService: ApiConfigService,
-    private unsubscribe: UnsubscriberService
+    private unsubscribe: UnsubscriberService,
+    private navCtrl: NavController
   ) {
-    this.appConfig.addIcons(['telephone-fill'], '/assets/bootstrap-icons');
+    this.registerIcons();
+    this.backButtonHandler();
+  }
+  private registerIcons() {
+    let icons = ['telephone-fill'];
+    this._appConfig.addIcons(icons, '/assets/bootstrap-icons');
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
   }
   private async getCurrentPosition(): Promise<{ lat: number; long: number }> {
     const coordinates = await Geolocation.getCurrentPosition();
@@ -79,7 +92,6 @@ export class MapsPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
   private async initGoogleMap() {
-    //console.log(this.capacitorGoogleMap);
     let mapsContainer = this.capacitorGoogleMap.nativeElement;
     const coordinates = await this.getCurrentPosition();
     this.newMap = await GoogleMap.create({
@@ -98,17 +110,17 @@ export class MapsPageComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       },
     });
-    const biz = { lat: -6.804507, lng: 39.276025 };
+    //const biz = { lat: -6.804507, lng: 39.276025 };
     const cameraId = await this.newMap.setCamera({
       coordinate: {
-        lat: biz.lat,
-        lng: biz.lng,
+        lat: coordinates.lat,
+        lng: coordinates.long,
       },
     });
     const markerId = await this.newMap.addMarker({
       coordinate: {
-        lat: biz.lat,
-        lng: biz.lng,
+        lat: coordinates.lat,
+        lng: coordinates.long,
       },
     });
   }
@@ -128,10 +140,21 @@ export class MapsPageComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     swipeDiv.addEventListener('click', (e) => {
       exists(this.swipeContainer.nativeElement.classList);
-      console.log(swipeDiv.classList);
     });
   }
   private requestGetRoute() {
+    const createVehicleDetails = (vehicles: VehicleDetail[]) => {
+      this.vehicleDetails$ = new Observable((subscriber) => {
+        subscriber.next(vehicles);
+        subscriber.complete();
+      });
+    };
+    const createRouteDetails = (routes: RouteDetail[]) => {
+      this.routeDetail$ = new Observable((subscriber) => {
+        subscriber.next(routes);
+        subscriber.complete();
+      });
+    };
     let body: StudentDetailsForm = {
       Facility_Reg_Sno: this.selectedStudent.Facility_Reg_Sno.toString(),
       Admission_No: this.selectedStudent.Admission_No,
@@ -139,10 +162,21 @@ export class MapsPageComponent implements OnInit, AfterViewInit, OnDestroy {
       To_Date: undefined,
     };
     this.loadingService.startLoading().then((loading) => {
-      this.vehicleDetails$ = this.apiService
+      this.apiService
         .getRoute(body)
-        .pipe(this.unsubscribe.takeUntilDestroy);
-      this.loadingService.dismiss();
+        .pipe(
+          tap((res) => createVehicleDetails(res)),
+          switchMap((res) =>
+            this.apiService.getRouteDetails({
+              Facility_Reg_Sno:
+                this.selectedStudent.Facility_Reg_Sno.toString(),
+              Route_ID: res[0].Route_ID,
+            })
+          ),
+          tap((res) => createRouteDetails(res)),
+          finalize(() => this.loadingService.dismiss())
+        )
+        .subscribe();
     });
   }
   ngOnInit() {}

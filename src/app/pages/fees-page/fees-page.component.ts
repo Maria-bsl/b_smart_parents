@@ -29,6 +29,7 @@ import {
   IonButtons,
   IonBackButton,
   IonText,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import jsPDF from 'jspdf';
@@ -110,18 +111,22 @@ export class FeesPageComponent implements OnInit, AfterViewInit {
   @ViewChildren(MatCard, { read: ElementRef }) matCards!: QueryList<ElementRef>;
   constructor(
     public feesService: FeesPageService,
-    private appConfig: AppConfigService,
-    private jsPdfService: JspdfUtilsService,
-    private loadingService: LoadingService,
-    private tr: TranslateService,
-    private datePipe: DatePipe,
-    private currencyPipe: CurrencyPipe,
+    private _appConfig: AppConfigService,
+    private navCtrl: NavController,
     private _dialog: MatDialog,
     private _unsubscribe: UnsubscriberService
   ) {
-    let icons = ['arrow-right', 'download'];
-    this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
+    this.registerIcons();
+    this.backButtonHandler();
     this.feesService.initFeesPage();
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
+  }
+  private registerIcons() {
+    let icons = ['arrow-right', 'download'];
+    this._appConfig.addIcons(icons, '/assets/bootstrap-icons');
   }
   ngAfterViewInit(): void {}
   ngOnInit() {}

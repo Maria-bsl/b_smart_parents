@@ -12,6 +12,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { IonText, IonTitle } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-confirm-message-box',
@@ -24,6 +26,8 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogActions,
     MatDialogClose,
     MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
     IonText,
     IonTitle,
     TranslateModule,

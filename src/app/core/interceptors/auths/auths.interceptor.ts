@@ -11,7 +11,7 @@ import {
 export const authsInterceptor: HttpInterceptorFn = (req, next) => {
   if (
     req.url.includes('/SchoolDetails/GetToken') ||
-    req.url.includes('/assets/i18n/')
+    req.url.startsWith('/assets/')
   ) {
     return next(req);
   }

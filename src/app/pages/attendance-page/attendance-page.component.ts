@@ -14,6 +14,7 @@ import {
   IonButtons,
   IonBackButton,
   IonText,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom, map } from 'rxjs';
@@ -22,6 +23,7 @@ import { AppConfigService } from 'src/app/services/app-config/app-config.service
 import { AttendancePageService } from 'src/app/services/pages/attendance-page-service/attendance-page-service.service';
 import * as moment from 'moment';
 import { AttendanceScore } from 'src/app/core/types/attendance';
+import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
 
 @Component({
   selector: 'app-attendance-page',
@@ -90,10 +92,20 @@ export class AttendancePageComponent implements OnInit {
   constructor(
     private attendanceService: AttendancePageService,
     private datePipe: DatePipe,
-    private appConfig: AppConfigService
+    private _appConfig: AppConfigService,
+    private unsubscribe: UnsubscriberService,
+    private navCtrl: NavController
   ) {
+    this.registerIcons();
+    this.backButtonHandler();
+  }
+  private registerIcons() {
     const icons = ['chevron-left', 'chevron-right'];
-    this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
+    this._appConfig.addIcons(icons, '/assets/bootstrap-icons');
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
   }
   private getMonthStartAndEndDates(
     year: number,
@@ -110,7 +122,7 @@ export class AttendancePageComponent implements OnInit {
     return { startDate, endDate };
   }
   ngOnInit() {
-    this.attendanceService.requestAttendanceScore();
+    //this.attendanceService.requestAttendanceScore();
   }
   scrollToItem(event: Event, itemId: string): void {
     event.preventDefault();
@@ -119,13 +131,23 @@ export class AttendancePageComponent implements OnInit {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }
-  nextScore(event: Event, scores: any[]) {
-    if (this.currentIndex < scores.length - 1) {
-      this.currentIndex++;
-      this.scrollToItem(event, `slide-${this.currentIndex}`);
-    }
+  nextScore(event: Event) {
+    // if (this.currentIndex < scores.length - 1) {
+    //   this.currentIndex++;
+    //   this.scrollToItem(event, `slide-${this.currentIndex}`);
+    // }
+    const scrollToItem = (scores: any[]) => {
+      if (this.currentIndex < scores.length - 1) {
+        this.currentIndex++;
+        this.scrollToItem(event, `slide-${this.currentIndex}`);
+      }
+    };
+    this.attendanceScore$.pipe(this.unsubscribe.takeUntilDestroy).subscribe({
+      next: (scores) => scrollToItem(scores),
+      error: (err) => console.error,
+    });
   }
-  prevScore(event: Event, scores: any[]) {
+  prevScore(event: Event) {
     if (this.currentIndex > 0) {
       this.currentIndex--;
       this.scrollToItem(event, `slide-${this.currentIndex}`);

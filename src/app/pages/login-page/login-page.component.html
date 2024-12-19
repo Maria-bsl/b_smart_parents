@@ -9,8 +9,10 @@
       <div class="absolute right-4 -top-32">
         <img src="assets/components/sign_in_kid.png" alt="" srcset="" />
       </div>
-      <div class="flex flex-row items-center w-full mt-4 justify-between">
-        <div class="flex flex-col">
+      <div
+        class="flex flex-row-reverse items-center w-full mt-4 justify-between"
+      >
+        <!-- <div class="flex flex-col">
           <ion-text class="text-4xl !text-black tracking-wider">{{
             "loginPage.labels.welcomeText" | translate
           }}</ion-text>
@@ -19,13 +21,31 @@
           >
             {{ "loginPage.labels.signInToContinue" | translate }}
           </ion-text>
+        </div> -->
+        <div class="flex flex-row items-center">
+          <img
+            class="w-28"
+            src="assets/images/b-smart-acamedia-logo.png"
+            alt=""
+            srcset=""
+          />
+          <img
+            class="w-28"
+            src="assets/components/nmb-light.png"
+            alt=""
+            srcset=""
+          />
         </div>
-        <img
-          class="w-24"
-          src="assets/components/nmb-light.png"
-          alt=""
-          srcset=""
-        />
+      </div>
+      <div class="flex flex-col">
+        <ion-text class="text-4xl !text-black tracking-wider">{{
+          "loginPage.labels.welcomeText" | translate
+        }}</ion-text>
+        <ion-text
+          class="text-lg !text-gray-400 tracking-wider !font-myriadProLight"
+        >
+          {{ "loginPage.labels.signInToContinue" | translate }}
+        </ion-text>
       </div>
       <form
         [formGroup]="loginFormGroup"
@@ -59,9 +79,17 @@
             </mat-form-field>
           </div>
           <div class="flex flex-col">
-            <ion-text class="mat-body-small !font-semibold placeholer-text">
-              {{ "loginPage.loginForm.labels.password" | translate }}
-            </ion-text>
+            <div class="flex flex-row items-center justify-between">
+              <ion-text class="mat-body-small !font-semibold placeholer-text">
+                {{ "loginPage.loginForm.labels.password" | translate }}
+              </ion-text>
+              <a
+                [routerLink]="'/forgot'"
+                class="mat-body-small placeholer-text !text-[#015aa8] hover:underline"
+              >
+                {{ "loginPage.loginForm.labels.forgottenPassword" | translate }}
+              </a>
+            </div>
             <mat-form-field class="w-full no-padding">
               <input
                 type="password"
@@ -79,27 +107,20 @@
             </mat-form-field>
           </div>
         </div>
-        <ion-button
-          size="large"
-          class="w-full text-white relative my-6"
-          expand="block"
-          type="ngSubmit"
-          form="login-form"
-          >{{ "loginPage.actions.signIn" | translate }}
-          <ion-icon
-            slot="end"
-            name="arrow-forward-outline"
-            class="absolute right-0 top-1/2 -translate-y-1/2"
-          ></ion-icon
-        ></ion-button>
+        <button type="ngSubmit" class="w-full my-4" mat-flat-button>
+          {{ "loginPage.actions.signIn" | translate }}
+        </button>
         <div class="flex flex-row items-center justify-end">
           <a
-            [routerLink]="'/register'"
-            class="mat-body-large hover:underline"
+            (click)="onRegisterClicked($event)"
+            class="mat-body-small text-[#015aa8] hover:underline"
             >{{ "loginPage.actions.register" | translate }}</a
           >
         </div>
       </form>
+      <!-- <div class="w-full grid place-items-center">
+        <img class="w-40" src="assets/images/Biz-Logic.png" alt="" srcset="" />
+      </div> -->
     </div>
   </div>
   <img

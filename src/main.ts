@@ -1,4 +1,4 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import {
   RouteReuseStrategy,
   provideRouter,
@@ -30,12 +30,13 @@ import {
 import { MatDialogModule } from '@angular/material/dialog';
 
 export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
 }
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    BrowserModule,
     provideIonicAngular(),
     provideHttpClient(withInterceptors([authsInterceptor])),
     provideRouter(

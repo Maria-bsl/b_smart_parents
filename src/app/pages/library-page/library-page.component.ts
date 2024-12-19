@@ -5,6 +5,7 @@ import {
   IonButtons,
   IonBackButton,
   IonText,
+  NavController,
 } from '@ionic/angular/standalone';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -52,11 +53,20 @@ export class LibraryPageComponent implements OnInit {
   );
   constructor(
     private apiService: ApiConfigService,
-    private appConfig: AppConfigService,
+    private _appConfig: AppConfigService,
     private unsubscribe: UnsubscriberService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private navCtrl: NavController
   ) {
-    this.appConfig.addIcons(['book-fill'], '/assets/bootstrap-icons');
+    this.registerIcons();
+    this.backButtonHandler();
+  }
+  private registerIcons() {
+    this._appConfig.addIcons(['book-fill'], '/assets/bootstrap-icons');
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
   }
   private initPage() {
     let body: FBookForm = {

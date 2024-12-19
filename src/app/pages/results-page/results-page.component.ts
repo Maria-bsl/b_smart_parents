@@ -20,6 +20,7 @@ import {
   IonBackButton,
   IonButton,
   IonIcon,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { AnimationItem } from 'lottie-web';
@@ -79,15 +80,18 @@ export class ResultsPageComponent implements OnInit {
   examTypeListRoute: string = '/tabs/tab-1/results';
   constructor(
     private studentService: StudentsManagementService,
-    private appConfig: AppConfigService
-  ) {}
+    private _appConfig: AppConfigService,
+    private navCtrl: NavController
+  ) {
+    this.backButtonHandler();
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
+  }
   ngOnInit() {}
   getCurrentPath() {
-    return this.appConfig.getCurrentPath();
+    return this._appConfig.getCurrentPath();
   }
-  onAnimate(animationItem: AnimationItem) {
-    //console.log(animationItem);
-    console.log(this.appConfig.getCurrentPath());
-    return;
-  }
+  onAnimate(animationItem: AnimationItem) {}
 }

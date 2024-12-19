@@ -73,9 +73,12 @@
           <div class="flex flex-col py-2 space-y-4">
             @for (booksBorrowed of (booksBorrowed$ | async)!;track
             booksBorrowed) {
-            <mat-card class="p-2" appearance="outlined">
+            <mat-card class="p-2 !relative" appearance="outlined">
+              <ion-text class="absolute right-2 bottom-0 mat-body-small">{{
+                booksBorrowed.Return_Date
+              }}</ion-text>
               <mat-card-content class="w-full">
-                <div class="flex flex-row items-center space-x-2">
+                <div class="flex flex-row items-center space-x-2 relative">
                   <mat-icon
                     class="!text-[var(--md-sys-color-on-primary)]"
                     svgIcon="book-fill"

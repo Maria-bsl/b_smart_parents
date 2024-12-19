@@ -52,7 +52,7 @@
           }
         </mat-card-subtitle>
       </div>
-      <section id="actions" class="block">
+      <section *ngIf="!isDownloading()" #actions id="actions" class="block">
         <button
           *ngIf="!canDownload; else downloadButton"
           (click)="openPayFees($event)"
@@ -78,3 +78,81 @@
     </mat-card-content>
   </mat-card>
 </div>
+
+<!-- <div
+  [id]="identifier"
+  #invoiceReceipt
+  class="w-full h-fit rounded-lg border p-2 my-2"
+>
+  <div class="mt-2 flex flex-col w-full">
+    <div class="w-full flex flex-row items-center justify-between">
+      <ion-text class="mat-body-small">
+        {{ "feesPage.labels.invoiceNo" | translate }}
+      </ion-text>
+      <ion-text class="mat-body-medium">{{ invoice.Invoice_No }}</ion-text>
+    </div>
+    <mat-divider class="!w-full !my-2"></mat-divider>
+    <div class="flex flex-col w-full">
+      <div class="w-full flex flex-row items-center justify-between">
+        <ion-text class="mat-body-small pr-2">{{
+          "feesPage.labels.school" | translate
+        }}</ion-text>
+        <ion-text class="mat-body-medium text-right truncate capitalize"
+          >{{ selectedStudent.Facility_Name.toLocaleLowerCase() }}
+        </ion-text>
+      </div>
+      <div class="w-full flex flex-row items-center justify-between">
+        <ion-text class="mat-body-small pr-2">{{
+          "feesPage.labels.dueDate" | translate
+        }}</ion-text>
+        <ion-text class="mat-body-medium text-right truncate capitalize">
+          @if (invoice.Invoice_Date) {
+          {{ invoice.Invoice_Date | date : "dd MMM yyyy" }}
+          } @else if (invoice.Expired_Date) {
+          {{ invoice.Expired_Date | date : "dd MMM yyyy" }}
+          } @else if (invoice.Paid_Date) {
+          {{ invoice.Paid_Date | date : "dd MMM yyyy" }}
+          }
+        </ion-text>
+      </div>
+    </div>
+    <mat-divider class="w-full !my-2"></mat-divider>
+    <div class="w-full h-full flex flex-row items-center justify-between">
+      <ion-text class="mat-body-small">{{
+        "feesPage.labels.requestedAmount" | translate
+      }}</ion-text>
+      <ion-text class="mat-body-medium !font-semibold">
+        @if (invoice.Invoice_Amount) {
+        {{ invoice.Invoice_Amount | currency : "TZS" }}
+        } @else if (invoice.Paid_Amount) {
+        {{ invoice.Paid_Amount | currency : "TZS" }}
+        } @else if (invoice.Pending_Amount) {
+        {{ invoice.Pending_Amount | currency : "TZS" }}
+        }
+      </ion-text>
+    </div>
+    <section #actions id="actions" class="block">
+      <button
+        *ngIf="!canDownload; else downloadButton"
+        (click)="openPayFees($event)"
+        class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+        mat-flat-button
+      >
+        <a>{{ "feesPage.actions.payNow" | translate }}</a>
+        <mat-icon svgIcon="arrow-right"></mat-icon>
+      </button>
+      <ng-template #downloadButton>
+        <button
+          (click)="downloadInvoiceFee($event)"
+          class="w-full py-2 my-2 !rounded-none flex flex-row-reverse space-x-2 items-center"
+          id="download-button"
+          #downloadButton
+          mat-button
+        >
+          {{ "feesPage.labels.download" | translate }}
+          <mat-icon svgIcon="download"></mat-icon>
+        </button>
+      </ng-template>
+    </section>
+  </div>
+</div> -->

@@ -34,7 +34,15 @@ import { LoadingService } from 'src/app/services/loading-service/loading.service
 import { FDeleteStudent } from 'src/app/core/forms/f-add-student';
 import { ApiConfigService } from 'src/app/services/api-config/api-config.service';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
-import { finalize, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import {
+  finalize,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  switchMap,
+  zip,
+} from 'rxjs';
 import { toast } from 'ngx-sonner';
 import { FLoginForm } from 'src/app/core/forms/f-login-form';
 import {
@@ -48,6 +56,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ConfirmMessageBoxComponent } from 'src/app/components/dialogs/confirm-message-box/confirm-message-box.component';
 import { orderBy } from 'lodash';
 import { OrderByPipe } from 'src/app/core/pipes/order-by/order-by.pipe';
+import { IParentDetail } from 'src/app/core/interfaces/parent-details';
 
 @Component({
   selector: 'app-home',
@@ -77,6 +86,7 @@ export class HomePage implements OnInit {
   studentDetails = signal<GetSDetails>(
     JSON.parse(localStorage.getItem('GetSDetails')!)
   );
+  parentDetails$!: Observable<IParentDetail>;
   constructor(
     private appConfig: AppConfigService,
     private apiService: ApiConfigService,
@@ -111,59 +121,48 @@ export class HomePage implements OnInit {
   }
   private getStudentDetails(body: FLoginForm) {
     this.loadingService.startLoading().then((loading) => {
-      this.apiService
-        .signIn({
-          User_Name: localStorage.getItem('User_Name')!,
-          Password: localStorage.getItem('Password')!,
-        })
-        .pipe(
-          this.unsubscribe.takeUntilDestroy,
-          finalize(() => this.loadingService.dismiss())
-        )
-        .subscribe({
-          next: (res: any) => {
-            if (Object.prototype.hasOwnProperty.call(res[0], 'status')) {
-              let failedMessageObs = 'defaults.failed';
-              let incorrectUsernamePasswordMessageObs =
-                'loginPage.loginForm.messageBox.errors.usernamePasswordIncorrect';
-              this.appConfig.openAlertMessageBox(
-                failedMessageObs,
-                incorrectUsernamePasswordMessageObs
-              );
-            } else {
-              let GetSDetails = JSON.stringify(res[0]);
-              localStorage.setItem('GetSDetails', GetSDetails);
-              this.studentDetails.set(
-                JSON.parse(localStorage.getItem('GetSDetails')!)
-              );
-            }
-          },
-          error: (err) => {
-            this.failedToGetStudentDetails();
-          },
+      const signIn$ = this.apiService
+        .signIn(body)
+        .pipe(finalize(() => this.loadingService.dismiss()));
+      const parentDetails$ = this.apiService
+        .getParentDetails({ User_Name: body.User_Name })
+        .pipe(finalize(() => this.loadingService.dismiss()));
+      const parseSignIn = (data: any) => {
+        if (Object.prototype.hasOwnProperty.call(data, 'status')) {
+          let failedMessageObs = 'defaults.failed';
+          let incorrectUsernamePasswordMessageObs =
+            'loginPage.loginForm.messageBox.errors.usernamePasswordIncorrect';
+          this.appConfig.openAlertMessageBox(
+            failedMessageObs,
+            incorrectUsernamePasswordMessageObs
+          );
+        } else {
+          let GetSDetails = JSON.stringify(data);
+          localStorage.setItem('GetSDetails', GetSDetails);
+          this.studentDetails.set(
+            JSON.parse(localStorage.getItem('GetSDetails')!)
+          );
+        }
+      };
+      const parseParentDetails = (parentDetail: IParentDetail) => {
+        this.parentDetails$ = new Observable((subscribe) => {
+          subscribe.next(parentDetail);
+          subscribe.complete();
         });
+      };
+      const merged = zip(signIn$, parentDetails$);
+      merged.subscribe({
+        next: (results) => {
+          const [signIn, parentDetails] = results;
+          parseSignIn(signIn[0]);
+          parseParentDetails(parentDetails[0]);
+        },
+        error: (err) => {
+          console.error(err.message);
+          this.loadingService.dismiss();
+        },
+      });
     });
-  }
-  ngOnInit(): void {
-    localStorage.removeItem('selectedStudent');
-    this.getStudentDetails({
-      User_Name: localStorage.getItem('User_Name')!,
-      Password: localStorage.getItem('Password')!,
-    });
-  }
-  openAddStudentPage() {
-    this.navCtrl.navigateBack('/add-student');
-  }
-  openNavigationsPages(event: any, student: GetSDetailStudents) {
-    localStorage.setItem('selectedStudent', JSON.stringify(student));
-    // this.navCtrl.navigateBack('/tabs/tab-1/dashboard', {
-    //   //replaceUrl: true,
-    // });
-    this.router.navigate(['/tabs/tab-1/dashboard'], { replaceUrl: true });
-    // this.navCtrl.navigateForward(['/tabs/tab-1/dashboard'], {
-    //   replaceUrl: true,
-    // });
-    //this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
   }
   private requestRemoveStudent(body: FDeleteStudent) {
     this.loadingService.startLoading().then((loading) => {
@@ -198,6 +197,20 @@ export class HomePage implements OnInit {
           },
         });
     });
+  }
+  ngOnInit(): void {
+    localStorage.removeItem('selectedStudent');
+    this.getStudentDetails({
+      User_Name: localStorage.getItem('User_Name')!,
+      Password: localStorage.getItem('Password')!,
+    });
+  }
+  openAddStudentPage() {
+    this.navCtrl.navigateForward('/add-student');
+  }
+  openNavigationsPages(event: any, student: GetSDetailStudents) {
+    localStorage.setItem('selectedStudent', JSON.stringify(student));
+    this.router.navigate(['/tabs/tab-1/dashboard'], { replaceUrl: true });
   }
   async removeStudent(event: any, student: GetSDetailStudents) {
     const removeConfirmed = (

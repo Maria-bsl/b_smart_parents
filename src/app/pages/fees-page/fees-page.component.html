@@ -50,11 +50,17 @@
                 >{{ "feesPage.labels.noAvailableFees" | translate }}</span
               >
             </div>
-            } @else {@for (pendingInvoices of studentInvoices$ | async; track
-            pendingInvoices) {
-            <app-invoice-receipt [invoice]="pendingInvoices">
+            } @else {
+            <app-invoice-receipt
+              [identifier]="'invoice-receipt-' + ind + 1"
+              *ngFor="
+                let pendingInvoices of studentInvoices$ | async;
+                index as ind
+              "
+              [invoice]="pendingInvoices"
+            >
             </app-invoice-receipt>
-            }}
+            }
           </ng-template>
         </mat-tab>
         <mat-tab>

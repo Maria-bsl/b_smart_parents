@@ -49,34 +49,7 @@ export class StudentDetailsFormService {
     private tr: TranslateService,
     private loadingService: LoadingService,
     private navCtrl: NavController
-  ) {
-    this.requestFacultiesList();
-  }
-  private requestFacultiesList() {
-    this.loadingService.startLoading().then((loading) => {
-      this.apiService
-        .getFacilities({})
-        .pipe(
-          this.unsubscribe.takeUntilDestroy,
-          finalize(() => this.loadingService.dismiss())
-        )
-        .subscribe({
-          next: (res: any) => {
-            this.faculties = res;
-            this.setupFacultiesAutocompleteEventHandlers();
-          },
-          error: (err) => {
-            let failedMessageObs = 'defaults.failed';
-            let errorOccuredMessageObs =
-              'addStudentPage.errors.failedToFindFaculties';
-            this.appConfig.openAlertMessageBox(
-              failedMessageObs,
-              errorOccuredMessageObs
-            );
-          },
-        });
-    });
-  }
+  ) {}
   private isInvalidFacultyName(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) return null;
@@ -147,6 +120,31 @@ export class StudentDetailsFormService {
     } catch (error) {
       console.error(error);
     }
+  }
+  requestFacultiesList() {
+    this.loadingService.startLoading().then((loading) => {
+      this.apiService
+        .getFacilities({})
+        .pipe(
+          this.unsubscribe.takeUntilDestroy,
+          finalize(() => this.loadingService.dismiss())
+        )
+        .subscribe({
+          next: (res: any) => {
+            this.faculties = res;
+            this.setupFacultiesAutocompleteEventHandlers();
+          },
+          error: (err) => {
+            let failedMessageObs = 'defaults.failed';
+            let errorOccuredMessageObs =
+              'addStudentPage.errors.failedToFindFaculties';
+            this.appConfig.openAlertMessageBox(
+              failedMessageObs,
+              errorOccuredMessageObs
+            );
+          },
+        });
+    });
   }
   validateForm(errors: { title: string; message: string }) {
     this.SDetails.controls.forEach((control, index) => {

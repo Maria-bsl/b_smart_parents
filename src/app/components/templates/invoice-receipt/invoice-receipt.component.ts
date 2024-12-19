@@ -6,13 +6,14 @@ import {
   Inject,
   Input,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   defer,
   distinctUntilChanged,
@@ -23,6 +24,7 @@ import {
   of,
   switchMap,
   tap,
+  zip,
 } from 'rxjs';
 import { GetSDetailStudents } from 'src/app/core/interfaces/GetSDetails';
 import {
@@ -36,6 +38,15 @@ import { LoadingService } from 'src/app/services/loading-service/loading.service
 import { PayWithMpesaComponent } from '../../dialogs/pay-with-mpesa/pay-with-mpesa.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.service';
+import jsPDF from 'jspdf';
+import domtoimage from 'dom-to-image';
+import * as FileSaver from 'file-saver';
+import { IonText } from '@ionic/angular/standalone';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  FileOpener,
+  FileOpenerOptions,
+} from '@capacitor-community/file-opener';
 
 @Component({
   selector: 'app-invoice-receipt',
@@ -49,6 +60,7 @@ import { UnsubscriberService } from 'src/app/services/unsubscriber/unsubscriber.
     CommonModule,
     MatIconModule,
     MatButtonModule,
+    IonText,
   ],
 })
 export class InvoiceReceiptComponent implements OnInit, AfterViewInit {
@@ -61,13 +73,18 @@ export class InvoiceReceiptComponent implements OnInit, AfterViewInit {
     | StudentPaidInvoice
     | any;
   @Input() canDownload: boolean = true;
+  @Input() identifier: string = '';
   @ViewChild('invoiceReceipt') invoiceReceipt!: ElementRef<HTMLDivElement>;
+  @ViewChild('actions') actions!: ElementRef<HTMLElement>;
+  isDownloading = signal<boolean>(false);
   constructor(
     private loadingService: LoadingService,
     private jsPdfService: JspdfUtilsService,
     private appConfig: AppConfigService,
     private _dialog: MatDialog,
-    private _unsubscribe: UnsubscriberService
+    private _unsubscribe: UnsubscriberService,
+    private tr: TranslateService,
+    private _snackBar: MatSnackBar
   ) {
     let icons = ['arrow-right', 'download'];
     this.appConfig.addIcons(icons, '/assets/bootstrap-icons');
@@ -77,16 +94,109 @@ export class InvoiceReceiptComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
   downloadInvoiceFee(event: MouseEvent) {
     this.loadingService.startLoading().then((loading) => {
-      let actions =
-        this.invoiceReceipt.nativeElement.getElementsByTagName('section');
-      actions[0].classList.remove('block');
-      actions[0].classList.add('hidden');
-      this.jsPdfService.exportHtml(this.invoiceReceipt.nativeElement);
-      actions[0].classList.remove('hidden');
-      actions[0].classList.add('block');
-      this.loadingService.dismiss();
+      this.isDownloading.set(true);
+      setTimeout(() => {
+        let filename = `invoice_receipt.pdf`;
+        let element = this.invoiceReceipt.nativeElement;
+        this.jsPdfService.exportHtml(element, filename);
+        this.isDownloading.set(false);
+        this.jsPdfService.finished$
+          .asObservable()
+          .pipe(this._unsubscribe.takeUntilDestroy)
+          .subscribe({
+            next: (finished) => {
+              setTimeout(() => {
+                this.loadingService.dismiss();
+                if (finished) {
+                  let downloadedMessage = this.tr.get(
+                    'defaults.labels.fileDownloaded'
+                  );
+                  let viewMessage = this.tr.get('defaults.view');
+                  let merged = zip(downloadedMessage, viewMessage);
+                  merged.pipe(this._unsubscribe.takeUntilDestroy).subscribe({
+                    next: (messages) => {
+                      let [msg1, msg2] = messages;
+                      let snackbar = this._snackBar.open(msg1, msg2, {
+                        duration: 5000,
+                      });
+                      snackbar
+                        .onAction()
+                        .pipe(this._unsubscribe.takeUntilDestroy)
+                        .subscribe({
+                          next: (res) => {
+                            let uri$ = this.jsPdfService.getFileUri(filename);
+                            uri$
+                              .pipe(this._unsubscribe.takeUntilDestroy)
+                              .subscribe({
+                                next: (file) => {
+                                  const fileOpenerOptions: FileOpenerOptions = {
+                                    filePath: file.uri,
+                                    contentType: 'application/pdf',
+                                    openWithDefault: true,
+                                  };
+                                  FileOpener.open(fileOpenerOptions);
+                                },
+                                error: (err) =>
+                                  console.error(`Failed to get file uri`, err),
+                              });
+                          },
+                          error: (err) => console.error(err),
+                        });
+                    },
+                    error: (err) => console.error(err),
+                  });
+                }
+              });
+            },
+            error: (err) => console.error(err),
+          });
+      }, 1000);
     });
   }
+
+  // downloadInvoiceFee(event: MouseEvent) {
+  //   this.loadingService.startLoading().then((loading) => {
+  //     let filename = `invoice_receipt.pdf`;
+  //     let element = this.invoiceReceipt.nativeElement;
+  //     // let actions = element.getElementsByTagName('section');
+  //     // actions[0].classList.remove('block');
+  //     // actions[0].classList.add('hidden');
+  //     this.isDownloading.set(true);
+  //     this.jsPdfService.exportHtml(element, filename);
+  //     this.isDownloading.set(false);
+  //     this.loadingService.dismiss();
+  //     let downloadedMessage = this.tr.get('defaults.labels.fileDownloaded');
+  //     let viewMessage = this.tr.get('defaults.view');
+  //     let merged = zip(downloadedMessage, viewMessage);
+  //     merged.pipe(this._unsubscribe.takeUntilDestroy).subscribe({
+  //       next: (messages) => {
+  //         let [msg1, msg2] = messages;
+  //         let snackbar = this._snackBar.open(msg1, msg2, { duration: 5000 });
+  //         snackbar
+  //           .onAction()
+  //           .pipe(this._unsubscribe.takeUntilDestroy)
+  //           .subscribe({
+  //             next: (res) => {
+  //               let uri$ = this.jsPdfService.getFileUri(filename);
+  //               uri$.pipe(this._unsubscribe.takeUntilDestroy).subscribe({
+  //                 next: (file) => {
+  //                   const fileOpenerOptions: FileOpenerOptions = {
+  //                     filePath: file.uri,
+  //                     contentType: 'application/pdf',
+  //                     openWithDefault: true,
+  //                   };
+  //                   FileOpener.open(fileOpenerOptions);
+  //                 },
+  //                 error: (err) => console.error(`Failed to get file uri`, err),
+  //               });
+  //             },
+  //             error: (err) => console.error(err),
+  //           });
+  //       },
+  //       error: (err) => console.error(err),
+  //     });
+  //   });
+  // }
   openPayFees(event: MouseEvent) {
     const dialog = this._dialog.open(PayWithMpesaComponent, {
       width: '400px',

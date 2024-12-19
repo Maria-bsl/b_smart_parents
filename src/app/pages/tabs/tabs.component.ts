@@ -14,7 +14,14 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { home, people, scan, busOutline, cubeOutline } from 'ionicons/icons';
+import {
+  home,
+  people,
+  scan,
+  busOutline,
+  cubeOutline,
+  personOutline,
+} from 'ionicons/icons';
 import { IsVisibleNavbarPipe } from 'src/app/core/pipes/is-visible-navbar/is-visible-navbar.pipe';
 import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 
@@ -42,7 +49,7 @@ import { AppConfigService } from 'src/app/services/app-config/app-config.service
 })
 export class TabsComponent implements OnInit {
   constructor(private appConfig: AppConfigService) {
-    addIcons({ home, scan, people, busOutline, cubeOutline });
+    addIcons({ home, scan, people, busOutline, cubeOutline, personOutline });
     this.registerIcons();
   }
   private registerIcons() {

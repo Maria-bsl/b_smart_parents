@@ -106,7 +106,7 @@
               svgIcon="ic_holiday_purple"
               class="scale-150"
             ></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.feesText" | translate
             }}</ion-text>
           </div>
@@ -118,7 +118,7 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="calendar-date-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.timeTableText" | translate
             }}</ion-text>
           </div>
@@ -133,7 +133,7 @@
               matPrefix
               svgIcon="file-earmark-bar-graph-fill"
             ></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.resultsText" | translate
             }}</ion-text>
           </div>
@@ -145,7 +145,7 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="calendar-check-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.attendanceText" | translate
             }}</ion-text>
           </div>
@@ -157,8 +157,32 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="book-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.library" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          [routerLink]="'/tabs/tab-1/books'"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="bookshelf"></mat-icon>
+            <ion-text class="mat-body-medium capitalize">{{
+              "booksPage.labels.title" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          (click)="requestEventDetails($event)"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="bell-fill"></mat-icon>
+            <ion-text class="mat-body-medium capitalize">{{
+              "dashboardPage.labels.notificationsText" | translate
             }}</ion-text>
           </div>
         </mat-grid-tile>
@@ -169,20 +193,8 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="lock-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.securityText" | translate
-            }}</ion-text>
-          </div>
-        </mat-grid-tile>
-        <mat-grid-tile
-          (click)="navigateToHomeScreen()"
-          matRipple
-          class="module-grid-tile rounded-lg"
-        >
-          <div class="flex flex-col space-y-4 w-full h-fit p-6">
-            <mat-icon matPrefix svgIcon="box-arrow-right"></mat-icon>
-            <ion-text class="mat-body-medium">{{
-              "dashboardPage.labels.switchAccount" | translate
             }}</ion-text>
           </div>
         </mat-grid-tile>
@@ -193,8 +205,20 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="headset"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.getSupportText" | translate
+            }}</ion-text>
+          </div>
+        </mat-grid-tile>
+        <mat-grid-tile
+          (click)="navigateToHomeScreen()"
+          matRipple
+          class="module-grid-tile rounded-lg"
+        >
+          <div class="flex flex-col space-y-4 w-full h-fit p-6">
+            <mat-icon matPrefix svgIcon="people-fill"></mat-icon>
+            <ion-text class="mat-body-medium capitalize">{{
+              "dashboardPage.labels.switchAccount" | translate
             }}</ion-text>
           </div>
         </mat-grid-tile>
@@ -205,7 +229,7 @@
         >
           <div class="flex flex-col space-y-4 w-full h-fit p-6">
             <mat-icon matPrefix svgIcon="door-open-fill"></mat-icon>
-            <ion-text class="mat-body-medium">{{
+            <ion-text class="mat-body-medium capitalize">{{
               "dashboardPage.labels.logout" | translate
             }}</ion-text>
           </div>
@@ -220,37 +244,3 @@
     srcset=""
   />
 </ion-content>
-
-<!-- <ion-content class="w-screen h-screen relative">
-  <div
-    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
-  >
-    <div class="flex-none text-white py-10">
-      <mat-toolbar
-        class="flex flex-row items-center justify-between !bg-transparent w-full"
-      >
-        <div class="flex flex-col">
-          <ion-title class="!text-white text-2xl">{{
-            dashboardService.selectedStudent.SFullName
-          }}</ion-title>
-          <ion-title class="!text-gray-300 mat-title-small !font-sora">
-            {{ dashboardService.selectedStudent.Class_Name }}
-          </ion-title>
-          <mat-chip class="w-fit ml-5 academic-year-chip">
-            {{ dashboardService.selectedStudent.Acad_Year }}
-          </mat-chip>
-        </div>
-      </mat-toolbar>
-    </div>
-    <span class="my-8"></span>
-    <div
-      class="grow relative h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
-    ></div>
-  </div>
-  <img
-    class="w-full h-full z-0"
-    src="assets/components/test-frame-1.png"
-    alt=""
-    srcset=""
-  />
-</ion-content> -->

@@ -22,29 +22,33 @@
       </mat-toolbar>
     </div>
     <div
-      *ngIf="attendanceScore$ | async as attendanceScore; else notFoundTemplate"
       class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col"
     >
-      <div class="flex flex-row items-center w-full justify-between">
-        <button
-          (click)="prevScore($event, attendanceScore)"
-          [disabled]="currentIndex === 0"
-          mat-icon-button
-        >
-          <mat-icon svgIcon="chevron-left"></mat-icon>
-        </button>
-        <h2 class="mat-title-medium !font-semibold capitalize pt-2.5">
-          {{ "attendance.labels.attendanceRecord" | translate }}
-        </h2>
-        <button
-          (click)="nextScore($event, attendanceScore)"
-          [disabled]="currentIndex === attendanceScore.length - 1"
-          mat-icon-button
-        >
-          <mat-icon svgIcon="chevron-right"></mat-icon>
-        </button>
-      </div>
-      <ng-container>
+      <ng-container
+        *ngIf="
+          (attendanceScore$ | async) && (attendanceScore$ | async)!.length > 0;
+          else notFoundTemplate
+        "
+      >
+        <div *ngIf="" class="flex flex-row items-center w-full justify-between">
+          <button
+            (click)="prevScore($event)"
+            [disabled]="currentIndex === 0"
+            mat-icon-button
+          >
+            <mat-icon svgIcon="chevron-left"></mat-icon>
+          </button>
+          <h2 class="mat-title-medium !font-semibold capitalize pt-2.5">
+            {{ "attendance.labels.attendanceRecord" | translate }}
+          </h2>
+          <button
+            (click)="nextScore($event)"
+            [disabled]="currentIndex === (attendanceScore$ | async)!.length - 1"
+            mat-icon-button
+          >
+            <mat-icon svgIcon="chevron-right"></mat-icon>
+          </button>
+        </div>
         <div class="carousel w-full">
           <ng-container
             *ngFor="
@@ -97,9 +101,11 @@
       </ng-container>
     </div>
     <ng-template #notFoundTemplate>
-      <span class="mat-body-large w-full text-center">{{
-        "attendance.labels.labels" | translate
-      }}</span>
+      <div class="w-full h-full grid place-items-center">
+        <span class="mat-body-large w-full text-center">{{
+          "attendance.labels.notAvailable" | translate
+        }}</span>
+      </div>
     </ng-template>
   </div>
   <img

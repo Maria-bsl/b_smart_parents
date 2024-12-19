@@ -2,6 +2,7 @@
   "defaults": {
     "failed": "Failed",
     "warning": "Warning",
+    "info": "Info",
     "cannotBeBlankText": "Cannot be blank",
     "confirm": "Confirm",
     "ok": "Ok",
@@ -10,6 +11,7 @@
     "success": "Success",
     "sessionExpiredMessage": "Session expired. You've been logged out. Please log in again.",
     "sessionExpired": "Session Expired",
+    "view": "View",
     "labels": {
       "from": "From",
       "to": "To",
@@ -17,7 +19,9 @@
       "all": "All",
       "home": "Home",
       "transport": "Transport",
-      "package": "Package"
+      "profile": "Profile",
+      "package": "Package",
+      "fileDownloaded": "Your file was downloaded successfully!"
     },
     "dialogs": {
       "sureLogoutText": "Are you sure you want to log out?"
@@ -74,16 +78,17 @@
     },
     "loginForm": {
       "labels": {
-        "emailAddress": "Email Address",
-        "password": "Password"
+        "emailAddress": "Username",
+        "password": "Password",
+        "forgottenPassword": "Forgotten password?"
       },
       "placeholders": {
-        "emailAddress": "Enter email address",
+        "emailAddress": "Enter username",
         "password": "Enter password"
       },
       "errors": {
         "blankEmailAddress": "Cannot be blank",
-        "invalidEmailAddress": "Invalid email address",
+        "invalidEmailAddress": "Invalid username",
         "blankPassword": "Cannot be blank"
       },
       "messageBox": {
@@ -123,11 +128,11 @@
     },
     "addStudentForm": {
       "labels": {
-        "facilityText": "Facility",
+        "facilityText": "School",
         "admissionNumberText": "Admission number"
       },
       "placeholders": {
-        "findFacilityText": "Find faculty",
+        "findFacilityText": "Find school",
         "enterAdmissionNumberText": "Enter admission number"
       }
     },
@@ -154,9 +159,12 @@
       "notificationsText": "Notification(s)",
       "securityText": "Change password",
       "getSupportText": "Get Support",
-      "switchAccount": "Switch Account",
+      "switchAccount": "Switch Student",
       "library": "Library",
       "logout": "Log out"
+    },
+    "errors": {
+      "notFound": "No records found."
     }
   },
   "changePasswordPage": {
@@ -249,7 +257,7 @@
       "attendance": "Attendance",
       "absent": "Absent",
       "present": "Present",
-      "notAvailable": "Not available",
+      "notAvailable": "No record(s) found.",
       "attendanceRecord": "Attendance record"
     }
   },
@@ -265,7 +273,8 @@
       "driverMobile": "Driver Mobile",
       "attendantMobile": "Attendant Mobile",
       "callDriver": "Call driver",
-      "callAttendant": "Call attendant"
+      "callAttendant": "Call attendant",
+      "c": "Area"
     }
   },
   "libraryPage": {
@@ -322,6 +331,53 @@
       "invalidShortCode": "Sorry the till number you entered does not exist.",
       "customerTransactionLimitReached": "Sorry, you have reached your transaction limit.",
       "processingFailed": "Failed to process transaction. Please try again or contact support."
+    }
+  },
+  "forgotPasswordPage": {
+    "labels": {
+      "title": "Forgot Password",
+      "subText": "No worries, we'll send you reset instructions."
+    },
+    "forgotPasswordForm": {
+      "labels": {
+        "email": "Email"
+      },
+      "placeholder": {
+        "email": "Enter your email"
+      }
+    },
+    "actions": {
+      "resetPassword": "Reset Password",
+      "backToLogin": "Back to login"
+    }
+  },
+  "booksPage": {
+    "labels": {
+      "title": "Books",
+      "availableSubjects": "All subject(s)"
+    },
+    "errors": {
+      "noBooksFound": "No books found"
+    }
+  },
+  "profilePage": {
+    "labels": {
+      "title": "Profile"
+    },
+    "form": {
+      "labels": {
+        "parentName": "Parent name",
+        "emailAddress": "Email address",
+        "mobileNumber": "Mobile number"
+      },
+      "placeholders": {
+        "parentName": "Enter parent name",
+        "emailAddress": "Enter email address",
+        "mobileNumber": "Enter mobile number"
+      }
+    },
+    "actions": {
+      "submit": "Submit"
     }
   }
 }

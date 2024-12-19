@@ -1,6 +1,134 @@
-<!-- <ion-content class="w-screen h-screen">
-  <p>profile-page works!</p>
-</ion-content> -->
-<div class="w-full h-full bg-green-500">
-  <p>Shillingi</p>
-</div>
+<ion-content class="w-screen h-screen relative">
+  <div
+    class="absolute top-0 left-0 right-0 bottom-0 w-full h-full flex flex-col"
+  >
+    <div class="flex-none text-white py-7">
+      <mat-toolbar class="flex flex-row items-center !bg-transparent w-full">
+        <ion-buttons slot="start">
+          <ion-back-button
+            class="text-white"
+            defaultHref="/tabs/tab-1"
+          ></ion-back-button>
+        </ion-buttons>
+        <ion-text class="!text-white">{{
+          "profilePage.labels.title" | translate
+        }}</ion-text>
+      </mat-toolbar>
+    </div>
+    <div
+      class="grow h-full bg-white rounded-tl-[3.5rem] rounded-tr-[3.5rem] p-8 flex flex-col relative"
+    >
+      <form
+        id="profile-form"
+        [formGroup]="profileFormGroup"
+        class="flex flex-col w-full"
+        (ngSubmit)="submitProfileForm($event)"
+      >
+        <div class="flex flex-col w-full">
+          <ion-text class="mat-body-small !font-semibold">{{
+            "profilePage.form.labels.parentName" | translate
+          }}</ion-text>
+          <mat-form-field>
+            <input
+              [formControl]="Parent_Name"
+              matInput
+              [placeholder]="
+                'addStudentPage.addStudentForm.placeholders.enterAdmissionNumberText'
+                  | translate
+              "
+            />
+            @if (Parent_Name | hasFormControlError: 'required') {
+            <mat-error>
+              {{ "defaults.cannotBeBlankText" | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="flex flex-col w-full">
+          <ion-text class="mat-body-small !font-semibold">{{
+            "profilePage.form.labels.emailAddress" | translate
+          }}</ion-text>
+          <mat-form-field>
+            <input
+              [formControl]="Email_Address"
+              matInput
+              [placeholder]="
+                'addStudentPage.addStudentForm.placeholders.enterAdmissionNumberText'
+                  | translate
+              "
+            />
+            @if (Email_Address | hasFormControlError: 'required') {
+            <mat-error>
+              {{ "defaults.cannotBeBlankText" | translate }}
+            </mat-error>
+            } @else if (Email_Address | hasFormControlError: 'email') {
+            <mat-error>
+              {{ "registerPage.registerForm.errors.invalidEmail" | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="flex flex-col w-full">
+          <ion-text class="mat-body-small !font-semibold" ccc>{{
+            "profilePage.form.labels.emailAddress" | translate
+          }}</ion-text>
+          <mat-form-field>
+            <span matTextPrefix>+255 &nbsp;</span>
+            <input
+              [formControl]="Mobile_No"
+              matInput
+              [placeholder]="
+                'addStudentPage.addStudentForm.placeholders.enterAdmissionNumberText'
+                  | translate
+              "
+            />
+            @if (Mobile_No | hasFormControlError: 'required') {
+            <mat-error>
+              {{ "defaults.cannotBeBlankText" | translate }}
+            </mat-error>
+            } @else if (Mobile_No | hasFormControlError: 'pattern') {
+            <mat-error>
+              {{
+                "registerPage.registerForm.errors.invalidPhoneNumber"
+                  | translate
+              }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="flex flex-row justify-end w-full space-x-2">
+          <button
+            type="button"
+            class="w-26 my-4 !text-red-500 !border-red-500"
+            mat-button
+            (click)="resetClicked($event)"
+          >
+            {{ "addStudentPage.actions.reset" | translate }}
+          </button>
+          <ng-container *ngIf="parentDetails$ | async as parentDetails">
+            <button
+              form="profile-form"
+              type="submit"
+              class="w-26 my-4"
+              mat-flat-button
+              [disabled]="
+                parentDetails.Parent_Name === Parent_Name.value &&
+                parentDetails.Email_Address === Email_Address.value &&
+                getMobileNumber(parentDetails.Mobile_No ?? '') ===
+                  getMobileNumber(Mobile_No.value)
+              "
+            >
+              {{ "profilePage.actions.submit" | translate }}
+            </button>
+          </ng-container>
+        </div>
+      </form>
+    </div>
+  </div>
+  <img
+    class="w-full h-full z-0"
+    src="assets/components/test-frame-1.png"
+    alt=""
+    srcset=""
+  />
+</ion-content>

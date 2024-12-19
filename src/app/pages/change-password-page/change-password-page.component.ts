@@ -16,10 +16,12 @@ import {
   IonBackButton,
   IonButton,
   IonIcon,
+  NavController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { GetParentDetail } from 'src/app/core/interfaces/GetParentDetails';
+import { AppConfigService } from 'src/app/services/app-config/app-config.service';
 import { UsersManagementService } from 'src/app/services/users-management/users-management.service';
 
 @Component({
@@ -56,8 +58,16 @@ export class ChangePasswordPageComponent implements OnInit {
   });
   constructor(
     private fb: FormBuilder,
-    private usersService: UsersManagementService
-  ) {}
+    private usersService: UsersManagementService,
+    private _appConfig: AppConfigService,
+    private navCtrl: NavController
+  ) {
+    this.backButtonHandler();
+  }
+  private backButtonHandler() {
+    const backToHome = () => this.navCtrl.navigateRoot('/tabs/tab-1/dashboard');
+    this._appConfig.backButtonEventHandler(backToHome);
+  }
   ngOnInit() {}
   submitChangePasswordForm() {
     if (this.changePasswordForm.valid) {

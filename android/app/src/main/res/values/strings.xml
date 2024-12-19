@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">b_smart_parents</string>
-    <string name="title_activity_main">b_smart_parents</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="app_name">bsmartparents</string>
+    <string name="title_activity_main">bsmartparents</string>
+    <string name="package_name">com.biz.bsmartparent</string>
+    <string name="custom_url_scheme">com.biz.bsmartparent</string>
 </resources>

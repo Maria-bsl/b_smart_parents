@@ -88,6 +88,13 @@ export const routes: Routes = [
                 (c) => c.LibraryPageComponent
               ),
           },
+          {
+            path: 'books',
+            loadComponent: () =>
+              import('../books-page/books-page.component').then(
+                (m) => m.BooksPageComponent
+              ),
+          },
         ],
       },
       {
@@ -105,6 +112,13 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('../profile-page/profile-page.component').then(
+            (m) => m.ProfilePageComponent
+          ),
       },
     ],
   },

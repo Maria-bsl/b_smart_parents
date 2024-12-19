@@ -1,17 +1,14 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'b_smart_parents',
+  //appId: 'io.ionic.starter',
+  appId: 'com.biz.bsmartparent',
+  appName: 'bsmartparents',
   webDir: 'www',
   plugins: {
     CapacitorHttp: {
-      enabled: true,
+      enabled: false,
     },
-  },
-  server: {
-    cleartext: true,
-    androidScheme: 'http',
   },
 };
 

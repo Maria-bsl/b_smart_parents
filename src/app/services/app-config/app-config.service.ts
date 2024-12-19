@@ -7,11 +7,21 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ConfirmMessageBoxComponent } from 'src/app/components/dialogs/confirm-message-box/confirm-message-box.component';
 import { TranslateService } from '@ngx-translate/core';
-import { endWith, firstValueFrom, map, of, switchMap, tap, zip } from 'rxjs';
+import {
+  endWith,
+  firstValueFrom,
+  from,
+  map,
+  of,
+  switchMap,
+  tap,
+  zip,
+} from 'rxjs';
 import { UnsubscriberService } from '../unsubscriber/unsubscriber.service';
 import { AppLauncher } from '@capacitor/app-launcher';
 import { isPlatform } from '@ionic/angular/standalone';
 import { LoadingService } from '../loading-service/loading.service';
+import { Platform } from '@ionic/angular/standalone';
 
 export interface SessionTokens {
   token: string | null | undefined;
@@ -30,7 +40,8 @@ export class AppConfigService {
     private iconRegistry: MatIconRegistry,
     private tr: TranslateService,
     private unsubscribe: UnsubscriberService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private platform: Platform
   ) {}
   private openMessageBoxDialog(title: string, message: string) {
     return this.dialog.open(MessageBoxDialogComponent, {
@@ -42,6 +53,11 @@ export class AppConfigService {
   }
   getCurrentPath() {
     return this.location.path();
+  }
+  backButtonEventHandler(callback: () => {}) {
+    this.platform.backButton.subscribeWithPriority(0, () => {
+      callback();
+    });
   }
   openAlertMessageBox(title: string, message: string) {
     let titleObs = this.tr.get(title);
@@ -76,6 +92,12 @@ export class AppConfigService {
   }
   navigateBack() {
     this.location.back();
+  }
+  displayErrorOccurredText() {
+    let failedMessageObs = 'defaults.failed';
+    let errorOccuredMessageObs =
+      'loginPage.loginForm.messageBox.errors.errorOccuredText';
+    this.openAlertMessageBox(failedMessageObs, errorOccuredMessageObs);
   }
   addIcons(icons: string[], path: string) {
     icons.forEach((icon) => {
