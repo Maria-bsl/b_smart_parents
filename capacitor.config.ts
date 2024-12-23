@@ -7,8 +7,11 @@ const config: CapacitorConfig = {
   webDir: 'www',
   plugins: {
     CapacitorHttp: {
-      enabled: false,
+      enabled: true,
     },
+    // SSLPinning: {
+    //   certs: ['nmb_certificate.crt'],
+    // },
   },
 };
 

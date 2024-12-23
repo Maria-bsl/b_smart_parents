@@ -12,7 +12,9 @@ import {
   from,
   map,
   Observable,
+  of,
   retry,
+  switchMap,
   tap,
   throwError,
 } from 'rxjs';
@@ -46,11 +48,15 @@ import {
   GetSDetailsErrorStatus,
 } from 'src/app/core/interfaces/GetSDetails';
 import { Router } from '@angular/router';
-import { AppConfigService } from '../app-config/app-config.service';
+import {
+  AppConfigService,
+  SessionTokens,
+} from '../app-config/app-config.service';
 import { isPlatform } from '@ionic/angular/standalone';
 import { ISubject, ISubjectBook } from 'src/app/core/interfaces/isubjects';
 import { IParentDetail } from 'src/app/core/interfaces/parent-details';
 import { IUpdateParentReg } from 'src/app/core/forms/f-update-parent-reg';
+import { CapacitorHttp } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root',
@@ -87,6 +93,144 @@ export class ApiConfigService {
       }
       return heads;
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    // const hasSecondsPassed = (date1: Date, date2: Date, seconds: number) => {
+    //   const differenceInMilliseconds = date2.getTime() - date1.getTime();
+    //   const secondsInMilliseconds = seconds * 1000;
+    //   return differenceInMilliseconds >= secondsInMilliseconds;
+    // };
+
+    // const isValidSession = ({
+    //   token,
+    //   expire_time,
+    //   expire_timestamp,
+    // }: SessionTokens) => {
+    //   const isNotNullOrEmpty = (value: string | null | undefined) =>
+    //     value && value.length > 0;
+    //   const isExistTokens =
+    //     isNotNullOrEmpty(token) &&
+    //     isNotNullOrEmpty(expire_time) &&
+    //     isNotNullOrEmpty(expire_timestamp);
+    //   if (!isExistTokens) return isExistTokens;
+    //   const expireIn = new Date(expire_timestamp!);
+    //   return !hasSecondsPassed(expireIn, new Date(), parseInt(expire_time!));
+    // };
+
+    // const proceedWithReq = (token: string) => {
+    //   if (isPlatform('capacitor')) {
+    //     let p = CapacitorHttp.get({
+    //       url: url,
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         'GWX-Authorization': `Bearer ${token}`,
+    //       },
+    //       connectTimeout: 15000,
+    //       readTimeout: 15000,
+    //     })
+    //       .then((res) => {
+    //         return res.data;
+    //       })
+    //       .catch((err) => {
+    //         throw err;
+    //       });
+    //     return from(p).pipe(
+    //       delay(500),
+    //       retry(3),
+    //       catchError((err) => {
+    //         throw err;
+    //       })
+    //     );
+    //   } else {
+    //     return this.http
+    //       .post(url, body, {
+    //         headers: createHeaders(headers),
+    //       })
+    //       .pipe(
+    //         delay(500),
+    //         retry(3),
+    //         catchError((err: any) => {
+    //           this.handleError(err);
+    //           throw err;
+    //         })
+    //       ) as Observable<any>;
+    //   }
+    // };
+
+    // let sessionTokens = this.appConfig.getSessionTokens();
+    // if (isValidSession(sessionTokens)) {
+    //   return proceedWithReq(sessionTokens.token!);
+    // } else {
+    //   let { username, password } = {
+    //     username: 'Nmb001user',
+    //     password: 'NMB@378139',
+    //   };
+    //   let basicAuth = btoa(`${username}:${password}`);
+    //   let p$ = CapacitorHttp.get({
+    //     url: `${this.baseUrl}/SchoolDetails/GetToken`,
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Basic ${basicAuth}`,
+    //     },
+    //     connectTimeout: 15000,
+    //     readTimeout: 15000,
+    //   })
+    //     .then((res) => {
+    //       return res.data;
+    //     })
+    //     .catch((err) => {
+    //       throw err;
+    //     });
+    //   return from(p$).pipe(
+    //     tap((val) => this.appConfig.setSessionTokens(val)),
+    //     switchMap((val) =>
+    //       proceedWithReq(this.appConfig.getSessionTokens().token ?? '')
+    //     )
+    //   );
+    // }
+
+    ///////////////////////////////////////////////////////////////////////
+
+    // if (isPlatform('capacitor')) {
+    //   let p = CapacitorHttp.get({
+    //     url: url,
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${token}`,
+    //       Origin: '*',
+    //     },
+    //     connectTimeout: 15000,
+    //     readTimeout: 15000,
+    //   })
+    //   .then((res) => {
+    //     return res.data;
+    //   })
+    //   .catch((err) => {
+    //     throw err;
+    //   });
+    // return from(p).pipe(
+    //   delay(500),
+    //   retry(3),
+    //   catchError((err) => {
+    //     throw err;
+    //   })
+    // );
+    // }
+    // else {
+    //   return this.http
+    //   .post(url, body, {
+    //     headers: createHeaders(headers),
+    //   })
+    //   .pipe(
+    //     delay(500),
+    //     retry(3),
+    //     catchError((err: any) => {
+    //       this.handleError(err);
+    //       throw err;
+    //     })
+    //   ) as Observable<any>;
+    // }
 
     return this.http
       .post(url, body, {
