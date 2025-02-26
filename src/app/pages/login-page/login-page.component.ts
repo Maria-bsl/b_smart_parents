@@ -89,24 +89,6 @@ export class LoginPageComponent implements OnInit {
   }
   onRegisterClicked(event: MouseEvent) {
     this.router.navigate(['/register'], { replaceUrl: true });
-    // const dialog = this._dialog.open(PayWithMpesaComponent, {
-    //   width: '400px',
-    //   data: {
-    //     amount: 10000,
-    //     description: 'TEST',
-    //   },
-    //   panelClass: 'm-pesa-panel',
-    //   disableClose: true,
-    // });
-    // dialog.componentInstance.mpesaService.transactionCompleted
-    //   .asObservable()
-    //   .subscribe({
-    //     next: async (isSuccess) => {
-    //       if (isSuccess) {
-    //         dialog.close();
-    //       }
-    //     },
-    //   });
   }
   get User_Name() {
     return this.loginFormGroup.get('User_Name') as FormControl;

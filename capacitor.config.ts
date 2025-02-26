@@ -9,6 +9,10 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true,
     },
+    server: {
+      cleartext: true,
+      androidScheme: 'http',
+    },
     // SSLPinning: {
     //   certs: ['nmb_certificate.crt'],
     // },

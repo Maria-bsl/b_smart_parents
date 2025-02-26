@@ -7,6 +7,7 @@ import {
   AppConfigService,
   SessionTokens,
 } from 'src/app/services/app-config/app-config.service';
+import { LoadingService } from 'src/app/services/loading-service/loading.service';
 
 export const authsInterceptor: HttpInterceptorFn = (req, next) => {
   if (
@@ -72,6 +73,7 @@ export const authsInterceptor: HttpInterceptorFn = (req, next) => {
 export const timeoutInterceptor: HttpInterceptorFn = (req, next) => {
   let timeoutDuration = 30000;
   let appConfig = inject(AppConfigService);
+  let loadingService = inject(LoadingService);
   return next(req).pipe(
     timeout(timeoutDuration),
     catchError((err) => {
@@ -79,6 +81,7 @@ export const timeoutInterceptor: HttpInterceptorFn = (req, next) => {
         'defaults.failed',
         'defaults.errors.requestTookTooLong'
       );
+      loadingService.dismiss();
       return throwError(() => err);
     })
   );

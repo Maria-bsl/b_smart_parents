@@ -38,7 +38,7 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     BrowserModule,
     provideIonicAngular(),
-    provideHttpClient(withInterceptors([authsInterceptor])),
+    provideHttpClient(withInterceptors([authsInterceptor, timeoutInterceptor])),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),

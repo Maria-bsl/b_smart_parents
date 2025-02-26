@@ -9,7 +9,15 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { finalize, map, Observable, of, startWith, switchMap } from 'rxjs';
+import {
+  catchError,
+  finalize,
+  map,
+  Observable,
+  of,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { GetFacilities } from 'src/app/core/interfaces/GetFacilities';
 import { AppConfigService } from '../app-config/app-config.service';
 import { ApiConfigService } from '../api-config/api-config.service';
@@ -127,7 +135,10 @@ export class StudentDetailsFormService {
         .getFacilities({})
         .pipe(
           this.unsubscribe.takeUntilDestroy,
-          finalize(() => this.loadingService.dismiss())
+          finalize(() => this.loadingService.dismiss()),
+          catchError((err) => {
+            throw err;
+          })
         )
         .subscribe({
           next: (res: any) => {

@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  nmbTokenBaseUrl: 'http://183.83.33.156:92/Mobile/api',
+  nmbTokenBaseUrl: 'http://10.200.238.88:81/MOBILE/api',
+  //nmbTokenBaseUrl: 'http://183.83.33.156:92/Mobile/api',
   //nmbTokenBaseUrl: 'https://schools-uat.nmbbank.co.tz/MOBILE/api',
   googleMapApiKey: 'AIzaSyBXeOCuK5n8odFY905hUBAZXJzhOmjCpow',
   airtel: {
